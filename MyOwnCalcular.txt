@@ -1,0 +1,220 @@
+#include <stdio.h>
+#include <malloc.h>
+#include <string>
+
+constexpr auto MAXSIZE = 40;;
+/* 顺序栈结构 */
+typedef struct
+{
+	char Sign[MAXSIZE];
+	int top; /* 用于栈顶指针 */
+}SignStack;
+
+typedef struct
+{
+	int Number[MAXSIZE];
+	int top;/* 用于栈顶指针*/
+}NumberStack;
+
+int Priority(char n);//返回元素优先级
+bool GetTopSign(SignStack S, char* e);
+bool GetTop(NumberStack S, int* e);
+float GetResult(SignStack mSign, NumberStack mNum,char* IN);
+
+bool Pop(NumberStack* S, int* e);
+bool PopSign(SignStack* S, char* e);
+bool Push(NumberStack* S, int e);
+bool PushSign(SignStack* S, char e);
+bool NeedPush(SignStack* S,char e);
+bool IsNumber(char c);		  /*判断字符c是否为数字*/
+bool NeedCalcular(char c);
+
+float Calcular(int m, int n, char sign);
+
+int main() {
+	char IN[100];
+	char* mIn = IN;
+	gets_s(IN);
+	SignStack mSign;
+	NumberStack mNum;
+	mSign.top = -1;
+	mNum.top = -1;
+	float sum;
+	sum = GetResult(mSign, mNum,mIn);
+	printf("The result of the formula is %.2f\n", sum);
+	return 0;
+}
+
+float GetResult(SignStack mSign, NumberStack mNun,char* mIn) {
+	char Scan,e;
+	int sum = 0, re = 0,m,n;
+	bool haveNum = false;
+
+	do {
+		Scan = *mIn;
+		if (IsNumber(Scan) == true)//当前字符为数字
+		{
+			re = 10 * re + ((int)Scan - '0');
+			haveNum = true;
+		}
+		else {//当前字符为操作符，需存入字符栈
+			if (haveNum){
+				Push(&mNun, re);
+				re = 0;
+				haveNum = false;
+			}
+			//入栈需判断与栈顶符号的优先级,高于栈顶元素时入栈
+
+			if (mSign.top != -1) {//字符栈非空时需要判断是否入栈
+				if (NeedPush)
+					PushSign(&mSign, Scan);
+				else {
+					/*需要进行出栈，运算，最后运算符的进栈操作‘+ - * / （ ） =’
+					  栈顶元素需要出栈，接下来判断所有需要出栈的值
+					  并且在出栈操作时进行运算*/
+					do {
+						PopSign(&mSign, &e);//e为需要对m和n进行的操作
+						if (NeedCalcular(e)) {
+							Pop(&mNun, &m);
+							Pop(&mNun, &n);
+							int mRe = Calcular(m, n, e);///暂时定为int之后进行更改
+							Push(&mNun, mRe);
+						}			
+					} while (NeedPush);
+					PushSign(&mSign, Scan);
+				}
+			}else {
+				PushSign(&mSign, Scan);
+			}
+		}
+		mIn++;
+	} while (*mIn != '\0');
+	GetTop(mNun,&sum);
+	return (float)sum;
+}
+
+bool NeedCalcular(char sign)
+{
+	switch (sign)
+	{
+	case '+':
+		return true;
+	case '-':
+		return true;
+	case '*':
+		return true;
+	case '/':
+		return true;
+	default:
+		break;
+	}
+	return false;
+}
+
+float Calcular(int m, int n, char sign) {
+	switch (sign)
+	{
+	case '+':
+		return (float)m + n;
+	case '-':
+		return (float)m - n;
+	case '*':
+		return (float)m * n;
+	case '/':
+		return (float)m / n;
+	default:
+		break;
+	}
+}
+
+bool NeedPush(SignStack* S, char e)
+{
+	
+	if (S->Sign[S->top] == '(' ||(Priority(S->Sign[S->top])> Priority(e))) {
+		return true;
+	}
+	else {
+		return false;
+	}
+}
+
+/* 插入元素e为新的栈顶元素 */
+bool Push(NumberStack* S, int e)
+{
+	if (S->top == MAXSIZE - 1) /* 栈满 */
+	{
+		return false;
+	}
+	S->top++;				/* 栈顶指针增加一 */
+	S->Number[S->top] = e;  /* 将新插入元素赋值给栈顶空间 */
+	return true;
+}
+
+bool PushSign(SignStack* S, char e)
+{
+	if (S->top == MAXSIZE - 1) /* 栈满 */
+	{
+		return false;
+	}
+	S->top++;				/* 栈顶指针增加一 */
+	S->Sign[S->top] = e;  /* 将新插入元素赋值给栈顶空间 */
+	return true;
+}
+
+/* 若栈不空，则删除S的栈顶元素，用e返回其值，并返回true；否则返回false */
+bool Pop(NumberStack* S, int* e)
+{
+	if (S->top == -1)
+		return false;
+	*e = S->Number[S->top];	/* 将要删除的栈顶元素赋值给e */
+	S->top--;				/* 栈顶指针减一 */
+	return true;
+}
+
+bool PopSign(SignStack* S, char* e)
+{
+	if (S->top == -1)
+		return false;
+	*e = S->Sign[S->top];	/* 将要删除的栈顶元素赋值给e */
+	S->top--;				/* 栈顶指针减一 */
+	return true;
+}
+
+/* 若栈不空，则用e返回S的栈顶元素，并返回1；否则返回0 */
+bool GetTop(NumberStack S, int* e) {
+	if (S.top == -1)
+		return false;
+	else
+		*e = S.Number[S.top];
+	return true;
+}
+
+bool GetTopSign(SignStack S, char* e) {
+	if (S.top == -1)
+		return false;
+	else
+		*e = S.Sign[S.top];
+	return true;
+}
+
+bool IsNumber(char c) {
+	if (c >= '0' && c <= '9')
+		return true;
+	else
+		return false;
+}
+
+int Priority(char n) {
+	if (n == '=')
+		return 0;
+	if (n == 's' || n == 'c' || n == 't' || n == 'g' || n == 'l')
+		return 1;
+	if (n == '+' || n == '-')
+		return 2;
+	if (n == '*' || n == '/')
+		return 3;
+	if (n == '^')
+		return 4;
+	if (n == ')')
+		return 0;
+}
