@@ -1,7 +1,7 @@
 #include <stdio.h>
 #include <malloc.h>
 #include <string>
-
+#include <math.h>
 constexpr auto MAXSIZE = 40;;
 /* 顺序栈结构 */
 typedef struct
@@ -12,24 +12,24 @@ typedef struct
 
 typedef struct
 {
-	int Number[MAXSIZE];
+	double Number[MAXSIZE];
 	int top;/* 用于栈顶指针*/
 }NumberStack;
 
 int Priority(char n);//返回元素优先级
 bool GetTopSign(SignStack S, char* e);
-bool GetTop(NumberStack S, int* e);
-float GetResult(SignStack mSign, NumberStack mNum,char* IN);
+bool GetTop(NumberStack S, double* e);
+double GetResult(SignStack mSign, NumberStack mNum,char* IN);
 
-bool Pop(NumberStack* S, int* e);
+bool Pop(NumberStack* S, double* e);
 bool PopSign(SignStack* S, char* e);
-bool Push(NumberStack* S, int e);
+bool Push(NumberStack* S, double e);
 bool PushSign(SignStack* S, char e);
 bool NeedPush(SignStack* S,char e,bool* shouldhaveleft);
 bool IsNumber(char c);		  /*判断字符c是否为数字*/
 bool NeedCalcular(char c);
-
-int Calcular(int m, int n, char sign);
+char SdInput(char** mIn);/*判断sin cos lg ln + - * / ( )等操作符的输入*/
+double Calcular(double n, double m, char sign, bool* OpTopSign);
 
 void PrintStack(NumberStack* S);
 void PrintSignStack(SignStack* S);
@@ -43,17 +43,19 @@ int main() {
 	mSign.top = -1;
 	mNum.top = -1;
 	
-	float sum;
+	double sum;
 	sum = GetResult(mSign, mNum,mIn);
 	printf("The result of the formula is %.2f\n", sum);
 	return 0;
 }
 
-float GetResult(SignStack mSign, NumberStack mNun,char* mIn) {
+double GetResult(SignStack mSign, NumberStack mNun,char* mIn) {
 	char Scan,e;
-	int sum = 0, re = 0,m,n;
-	bool haveNum = false;
-	bool PopLeft = false;
+	double sum = 0, m,n;
+	bool haveNum = false;//当前字符输入之前是否有数字
+	bool PopLeft = false;//是否需要将字符栈中的左括号弹出
+	bool OpTopSign = false;//是否只对栈顶元素进行操作，如sin,cos函数
+	int re = 0;
 
 	do {
 
@@ -66,15 +68,20 @@ float GetResult(SignStack mSign, NumberStack mNun,char* mIn) {
 		else {//当前字符为操作符，需存入字符栈
 			//如果上一个数据为数字，则先存入数字栈
 			if (haveNum){
+				
 				Push(&mNun, re);
 				re = 0;
 				haveNum = false;
 			}
 			//入栈需判断与栈顶符号的优先级,高于栈顶元素时入栈
-	
+			printf("The top is %c\n", *mIn);
+			Scan = SdInput(&mIn);
+			printf("The end is %c\n", *mIn);
 			if (mSign.top != -1) {//字符栈非空时需要判断是否入栈
-				if (NeedPush(&mSign, Scan,&PopLeft))
+				if (NeedPush(&mSign, Scan, &PopLeft)) {
 					PushSign(&mSign, Scan);
+					
+				}
 				else {
 					/*需要进行出栈，运算，最后运算符的进栈操作‘+ - * / （ ） =’
 					  栈顶元素需要出栈，接下来判断所有需要出栈的值
@@ -89,15 +96,18 @@ float GetResult(SignStack mSign, NumberStack mNun,char* mIn) {
 						if (e == ')') {
 							PopLeft = true;
 						}
-
+						
 						if (NeedCalcular(e)) {
+							OpTopSign = false;
 							Pop(&mNun, &m);
 							Pop(&mNun, &n);
-							int mRe = Calcular(m, n, e);///暂时定为int之后进行更改
+							double mRe = Calcular(m, n, e, &OpTopSign);///暂时定为int之后进行更改
+							if (OpTopSign) {//栈顶元素为m,若返回的OpTopSign为true则需要将n压栈
+								Push(&mNun, n);
+							}
 							Push(&mNun, mRe);
 							e = 0;
 						}
-						printf("%c\n", Scan);
 					} while (!NeedPush(&mSign, Scan,&PopLeft));
 					PushSign(&mSign, Scan);
 				}
@@ -110,29 +120,62 @@ float GetResult(SignStack mSign, NumberStack mNun,char* mIn) {
 	} while (*mIn != '\0');
 	GetTop(mNun,&sum);
 	
-	return (float)sum;
+	return sum;
 }
+
+char SdInput(char** mIn) {
+	switch (**mIn)
+	{
+	case '+':
+		return '+';
+	case '-':
+		return '-';
+	case '*':
+		return '*';
+	case '/':
+		return '/';
+	case '(':
+		return '(';
+	case')':
+		return ')';
+	case's':
+		*mIn += 2;
+		return 's';//用s来代表sin函数
+	case'c':
+		*mIn += 3;
+		return 'c';//用c来代表cos函数
+	case'l':
+		*mIn++;
+		if (**mIn == 'n') {
+			return 'n';//用n来代表ln函数
+		}else {
+			*mIn++;
+			return 'g';//用g来代表log函数
+		}
+	case '^':
+		return '^';//乘方
+	case '=':
+		return '=';
+	default:
+		break;
+	}
+}
+
 void PrintSignStack(SignStack* S) {
 	int prim = S->top;
-	printf("Sign:");
 	while (prim!=-1)
-	{
-		printf("%c ", S->Sign[prim]);
+	{		
 		prim--;
 	}
-	printf("\n");
 }
 
 void PrintStack(NumberStack* S)
 {
 	int prim = S->top;
-	printf("Num:");
 	while (prim!=-1)
-	{
-		printf("%d ", S->Number[prim]);
+	{		
 		prim--;
 	}
-	printf("\n");
 }
 bool NeedCalcular(char sign)
 {
@@ -146,23 +189,49 @@ bool NeedCalcular(char sign)
 		return true;
 	case '/':
 		return true;
+	case '^':
+		return true;
+	case 'c':
+		return true;
+	case 's':
+		return true;
+	case 'g':
+		return true;
+	case 'n':
+		return true;
 	default:
 		break;
 	}
 	return false;
 }
 
-int Calcular(int n, int m, char sign) {
+double Calcular(double m, double n, char sign, bool* OpTopSign) {//m为栈顶元素
 	switch (sign)
 	{
 	case '+':
-		return m + n;
+		return n + m;
 	case '-':
-		return m - n;
+		return n - m;
 	case '*':
-		return m * n;
+		return n * m;
 	case '/':
-		return m /n;
+		return n /m;
+	case '^':
+		*OpTopSign=true;
+		return pow(n,m);
+	case 'c':
+		*OpTopSign = true;
+		printf("cos(%lf)\n",m);
+		return cos(m);
+	case 's':
+		*OpTopSign = true;
+		return sin(m);
+	case 'g':
+		*OpTopSign = true;
+		return log10(m);
+	case 'n':
+		*OpTopSign = true;
+		return log(m);
 	default:
 		break;
 	}
@@ -184,7 +253,7 @@ bool NeedPush(SignStack* S, char e,bool* popLeft)
 }
 
 /* 插入元素e为新的栈顶元素 */
-bool Push(NumberStack* S, int e)
+bool Push(NumberStack* S, double e)
 {
 	if (S->top == MAXSIZE - 1) /* 栈满 */
 	{
@@ -207,7 +276,7 @@ bool PushSign(SignStack* S, char e)
 }
 
 /* 若栈不空，则删除S的栈顶元素，用e返回其值，并返回true；否则返回false */
-bool Pop(NumberStack* S, int* e)
+bool Pop(NumberStack* S, double* e)
 {
 	if (S->top == -1)
 		return false;
@@ -226,7 +295,7 @@ bool PopSign(SignStack* S, char* e)
 }
 
 /* 若栈不空，则用e返回S的栈顶元素，并返回1；否则返回0 */
-bool GetTop(NumberStack S, int* e) {
+bool GetTop(NumberStack S, double* e) {
 	if (S.top == -1)
 		return false;
 	else
@@ -253,8 +322,9 @@ int Priority(char n) {
 	if (n == '=')
 		return 0;
 	
-	if (n == 's' || n == 'c' || n == 't' || n == 'g' || n == 'l')
+	if (n == 's' || n == 'c' || n == 't' || n == 'g' || n == 'n')
 		return 1;
+
 	if (n == '+' || n == '-')
 		return 2;
 	if (n == '*' || n == '/')
