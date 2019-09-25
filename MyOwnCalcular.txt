@@ -25,11 +25,14 @@ bool Pop(NumberStack* S, int* e);
 bool PopSign(SignStack* S, char* e);
 bool Push(NumberStack* S, int e);
 bool PushSign(SignStack* S, char e);
-bool NeedPush(SignStack* S,char e);
+bool NeedPush(SignStack* S,char e,bool* shouldhaveleft);
 bool IsNumber(char c);		  /*判断字符c是否为数字*/
 bool NeedCalcular(char c);
 
-float Calcular(int m, int n, char sign);
+int Calcular(int m, int n, char sign);
+
+void PrintStack(NumberStack* S);
+void PrintSignStack(SignStack* S);
 
 int main() {
 	char IN[100];
@@ -39,6 +42,7 @@ int main() {
 	NumberStack mNum;
 	mSign.top = -1;
 	mNum.top = -1;
+	
 	float sum;
 	sum = GetResult(mSign, mNum,mIn);
 	printf("The result of the formula is %.2f\n", sum);
@@ -49,8 +53,10 @@ float GetResult(SignStack mSign, NumberStack mNun,char* mIn) {
 	char Scan,e;
 	int sum = 0, re = 0,m,n;
 	bool haveNum = false;
+	bool PopLeft = false;
 
 	do {
+
 		Scan = *mIn;
 		if (IsNumber(Scan) == true)//当前字符为数字
 		{
@@ -58,41 +64,76 @@ float GetResult(SignStack mSign, NumberStack mNun,char* mIn) {
 			haveNum = true;
 		}
 		else {//当前字符为操作符，需存入字符栈
+			//如果上一个数据为数字，则先存入数字栈
 			if (haveNum){
 				Push(&mNun, re);
 				re = 0;
 				haveNum = false;
 			}
 			//入栈需判断与栈顶符号的优先级,高于栈顶元素时入栈
-
+	
 			if (mSign.top != -1) {//字符栈非空时需要判断是否入栈
-				if (NeedPush)
+				if (NeedPush(&mSign, Scan,&PopLeft))
 					PushSign(&mSign, Scan);
 				else {
 					/*需要进行出栈，运算，最后运算符的进栈操作‘+ - * / （ ） =’
 					  栈顶元素需要出栈，接下来判断所有需要出栈的值
 					  并且在出栈操作时进行运算*/
+					/*需要对左右括号进行单独判断*/
 					do {
+						PopLeft = false;
+						PrintStack(&mNun);
+						PrintSignStack(&mSign);
+
 						PopSign(&mSign, &e);//e为需要对m和n进行的操作
+						if (e == ')') {
+							PopLeft = true;
+						}
+
 						if (NeedCalcular(e)) {
 							Pop(&mNun, &m);
 							Pop(&mNun, &n);
 							int mRe = Calcular(m, n, e);///暂时定为int之后进行更改
 							Push(&mNun, mRe);
-						}			
-					} while (NeedPush);
+							e = 0;
+						}
+						printf("%c\n", Scan);
+					} while (!NeedPush(&mSign, Scan,&PopLeft));
 					PushSign(&mSign, Scan);
 				}
 			}else {
 				PushSign(&mSign, Scan);
 			}
 		}
+		
 		mIn++;
 	} while (*mIn != '\0');
 	GetTop(mNun,&sum);
+	
 	return (float)sum;
 }
+void PrintSignStack(SignStack* S) {
+	int prim = S->top;
+	printf("Sign:");
+	while (prim!=-1)
+	{
+		printf("%c ", S->Sign[prim]);
+		prim--;
+	}
+	printf("\n");
+}
 
+void PrintStack(NumberStack* S)
+{
+	int prim = S->top;
+	printf("Num:");
+	while (prim!=-1)
+	{
+		printf("%d ", S->Number[prim]);
+		prim--;
+	}
+	printf("\n");
+}
 bool NeedCalcular(char sign)
 {
 	switch (sign)
@@ -111,27 +152,31 @@ bool NeedCalcular(char sign)
 	return false;
 }
 
-float Calcular(int m, int n, char sign) {
+int Calcular(int n, int m, char sign) {
 	switch (sign)
 	{
 	case '+':
-		return (float)m + n;
+		return m + n;
 	case '-':
-		return (float)m - n;
+		return m - n;
 	case '*':
-		return (float)m * n;
+		return m * n;
 	case '/':
-		return (float)m / n;
+		return m /n;
 	default:
 		break;
 	}
 }
 
-bool NeedPush(SignStack* S, char e)
+bool NeedPush(SignStack* S, char e,bool* popLeft)
 {
 	
-	if (S->Sign[S->top] == '(' ||(Priority(S->Sign[S->top])> Priority(e))) {
-		return true;
+	if ((Priority(S->Sign[S->top])< Priority(e))||S->top==-1||((S->Sign[S->top] == '(') &&(*popLeft==false ))) {
+		return true;//true时执行进栈操作
+	}
+	else if (((S->Sign[S->top] == '(') && (*popLeft == true))) {//需要将左括号出栈
+		*popLeft = false;
+		return false;
 	}
 	else {
 		return false;
@@ -207,6 +252,7 @@ bool IsNumber(char c) {
 int Priority(char n) {
 	if (n == '=')
 		return 0;
+	
 	if (n == 's' || n == 'c' || n == 't' || n == 'g' || n == 'l')
 		return 1;
 	if (n == '+' || n == '-')
