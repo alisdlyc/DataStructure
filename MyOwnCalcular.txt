@@ -2,7 +2,7 @@
 #include <malloc.h>
 #include <string>
 #include <math.h>
-constexpr auto MAXSIZE = 40;;
+constexpr auto MAXSIZE = 40;;//定义字符栈和数字栈的最大长度
 /* 顺序栈结构 */
 typedef struct
 {
@@ -16,21 +16,20 @@ typedef struct
 	int top;/* 用于栈顶指针*/
 }NumberStack;
 
-int Priority(char n);//返回元素优先级
-bool GetTopSign(SignStack S, char* e);
-bool GetTop(NumberStack S, double* e);
-double GetResult(SignStack mSign, NumberStack mNum,char* IN);
+int Priority(char n);//返回操作符的优先级
+double GetResult(SignStack mSign, NumberStack mNum,char* IN);/*对输入进行计算并返回结果*/
 
-bool Pop(NumberStack* S, double* e);
-bool PopSign(SignStack* S, char* e);
-bool Push(NumberStack* S, double e);
-bool PushSign(SignStack* S, char e);
-bool NeedPush(SignStack* S,char e,bool* shouldhaveleft);
-bool IsNumber(char c);		  /*判断字符c是否为数字*/
-bool NeedCalcular(char c);
-char SdInput(char** mIn);/*判断sin cos lg ln + - * / ( )等操作符的输入*/
-double Calcular(double n, double m, char sign, bool* OpTopSign);
+bool Pop(NumberStack* S, double* e);/*读取栈顶元素并删除，然后赋值给e*/
+bool PopSign(SignStack* S, char* e);/*读取栈顶元素并删除，然后赋值给e*/
+bool Push(NumberStack* S, double e);/*将e入栈*/
+bool PushSign(SignStack* S, char e);/*将e入栈*/
 
+bool IsNumber(char c,bool* haveDot);		  /*判断字符c是否为数字,以及是否有小数的输入*/
+bool NeedCalcular(char c);					  /*判断字符c是否需要执行计算*/
+char SdInput(char** mIn);					  /*判断sin cos lg ln + - * / ( )等操作符的输入*/
+bool NeedPush(SignStack* S, char e, bool* shouldhaveleft);			/*判断当前字符e是否需要执行入栈操作*/
+double Calcular(double m, double n, char sign, bool* OpTopSign);	/*根据操作符sign对m,n进行计算且返回结果*/
+																	/*若Calcular只对栈顶元素进行计算,如sin,则OpTopSign为true*/
 void PrintStack(NumberStack* S);
 void PrintSignStack(SignStack* S);
 
@@ -45,7 +44,7 @@ int main() {
 	
 	double sum;
 	sum = GetResult(mSign, mNum,mIn);
-	printf("The result of the formula is %.2f\n", sum);
+	printf("The result of the formula is %.5f\n", sum);
 	return 0;
 }
 
@@ -55,28 +54,45 @@ double GetResult(SignStack mSign, NumberStack mNun,char* mIn) {
 	bool haveNum = false;//当前字符输入之前是否有数字
 	bool PopLeft = false;//是否需要将字符栈中的左括号弹出
 	bool OpTopSign = false;//是否只对栈顶元素进行操作，如sin,cos函数
-	int re = 0;
+	bool haveDot = false;
+	int power=0;
+	double re = 0;
 
 	do {
-
+		
 		Scan = *mIn;
-		if (IsNumber(Scan) == true)//当前字符为数字
+		if (IsNumber(Scan,&haveDot) == true)//当前字符为数字
 		{
-			re = 10 * re + ((int)Scan - '0');
+			printf("%c\n", Scan);
+	
+			if (haveDot) {//当前Scan为'.'，其下一位为数字
+				if (power == 0) {
+					power++;
+				}
+				else {
+					re = re + ((double)Scan - '0') * pow(10, -power);
+					power++;
+				}
+			}
+			else {
+				re = 10 * re + ((double)Scan - '0');
+			}	
 			haveNum = true;
 		}
 		else {//当前字符为操作符，需存入字符栈
 			//如果上一个数据为数字，则先存入数字栈
 			if (haveNum){
-				
 				Push(&mNun, re);
 				re = 0;
 				haveNum = false;
+				haveDot = false;
+				power = 0;
 			}
+
 			//入栈需判断与栈顶符号的优先级,高于栈顶元素时入栈
-			printf("The top is %c\n", *mIn);
+			//printf("The top is %c\n", *mIn);
 			Scan = SdInput(&mIn);
-			printf("The end is %c\n", *mIn);
+			//printf("The end is %c\n", *mIn);
 			if (mSign.top != -1) {//字符栈非空时需要判断是否入栈
 				if (NeedPush(&mSign, Scan, &PopLeft)) {
 					PushSign(&mSign, Scan);
@@ -118,9 +134,20 @@ double GetResult(SignStack mSign, NumberStack mNun,char* mIn) {
 		
 		mIn++;
 	} while (*mIn != '\0');
-	GetTop(mNun,&sum);
+	Pop(&mNun,&sum);
 	
 	return sum;
+}
+
+bool IsNumber(char c, bool* haveDot) {
+	if (c >= '0' && c <= '9')
+		return true;
+	else if (c == '.') {
+		*haveDot = true;
+		return true;
+	}
+	else
+		return false;
 }
 
 char SdInput(char** mIn) {
@@ -145,11 +172,11 @@ char SdInput(char** mIn) {
 		*mIn += 3;
 		return 'c';//用c来代表cos函数
 	case'l':
-		*mIn++;
+		*mIn+=1;
 		if (**mIn == 'n') {
 			return 'n';//用n来代表ln函数
 		}else {
-			*mIn++;
+			*mIn+=1;
 			return 'g';//用g来代表log函数
 		}
 	case '^':
@@ -292,30 +319,6 @@ bool PopSign(SignStack* S, char* e)
 	*e = S->Sign[S->top];	/* 将要删除的栈顶元素赋值给e */
 	S->top--;				/* 栈顶指针减一 */
 	return true;
-}
-
-/* 若栈不空，则用e返回S的栈顶元素，并返回1；否则返回0 */
-bool GetTop(NumberStack S, double* e) {
-	if (S.top == -1)
-		return false;
-	else
-		*e = S.Number[S.top];
-	return true;
-}
-
-bool GetTopSign(SignStack S, char* e) {
-	if (S.top == -1)
-		return false;
-	else
-		*e = S.Sign[S.top];
-	return true;
-}
-
-bool IsNumber(char c) {
-	if (c >= '0' && c <= '9')
-		return true;
-	else
-		return false;
 }
 
 int Priority(char n) {
