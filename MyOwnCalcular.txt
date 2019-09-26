@@ -28,44 +28,46 @@ bool IsNumber(char c,bool* haveDot);		  /*判断字符c是否为数字,以及是否有小数的输
 bool NeedCalcular(char c);					  /*判断字符c是否需要执行计算*/
 char SdInput(char** mIn);					  /*判断sin cos lg ln + - * / ( )等操作符的输入*/
 bool NeedPush(SignStack* S, char e, bool* shouldhaveleft);			/*判断当前字符e是否需要执行入栈操作*/
-double Calcular(double m, double n, char sign, bool* OpTopSign);	/*根据操作符sign对m,n进行计算且返回结果*/
-																	/*若Calcular只对栈顶元素进行计算,如sin,则OpTopSign为true*/
-void PrintStack(NumberStack* S);
-void PrintSignStack(SignStack* S);
+double Calcular(double m, double n, char sign, bool* OpTopSign);
+/*根据操作符sign对m,n进行计算且返回结果*/
+/*若Calcular只对栈顶元素进行计算,如sin,则OpTopSign为true*/
 
+/*输入规范*/
+/*输入操作时左右括号应该为英文输入状态下的(),表达式以等号结束*/
+/*sin,cos,lg,ln的输入需要加上括号，即sin(x),cos(x),log(x),ln(x)*/
+/*如 1+2*3/4-(sin(0.215)+cos(1.25))= */
 int main() {
 	char IN[100];
 	char* mIn = IN;
-	gets_s(IN);
+	double sum;
 	SignStack mSign;
 	NumberStack mNum;
 	mSign.top = -1;
 	mNum.top = -1;
-	
-	double sum;
+
+	gets_s(IN);
 	sum = GetResult(mSign, mNum,mIn);
-	printf("The result of the formula is %.5f\n", sum);
+	printf("The result of the formula is %.4f\n", sum);//当前为保留四位小数
 	return 0;
 }
 
 double GetResult(SignStack mSign, NumberStack mNun,char* mIn) {
+	int power = 0;
 	char Scan,e;
-	double sum = 0, m,n;
-	bool haveNum = false;//当前字符输入之前是否有数字
-	bool PopLeft = false;//是否需要将字符栈中的左括号弹出
-	bool OpTopSign = false;//是否只对栈顶元素进行操作，如sin,cos函数
-	bool haveDot = false;
-	int power=0;
-	double re = 0;
+	double sum = 0,  re = 0, m,n;
+	bool haveNum = false;	//当前字符输入之前是否有数字未进栈
+	bool PopLeft = false;	//是否需要将字符栈中的左括号弹出,当有右括号出现时,为true,此时对应的左括号应出栈
+	bool OpTopSign = false;	//是否只对栈顶元素进行操作，如sin,cos函数
+	bool haveDot = false;	//是否有小数点，若为true则之后读入的数字为小数
+	
 
 	do {
 		
 		Scan = *mIn;
 		if (IsNumber(Scan,&haveDot) == true)//当前字符为数字
 		{
-			printf("%c\n", Scan);
-	
-			if (haveDot) {//当前Scan为'.'，其下一位为数字
+
+			if (haveDot) {					//存在小数点，之后的数字输入为小数部分
 				if (power == 0) {
 					power++;
 				}
@@ -79,8 +81,9 @@ double GetResult(SignStack mSign, NumberStack mNun,char* mIn) {
 			}	
 			haveNum = true;
 		}
-		else {//当前字符为操作符，需存入字符栈
-			//如果上一个数据为数字，则先存入数字栈
+		else {
+			//当前字符为操作符，需存入字符栈
+			//如果上一个数据为数字，则先将数字入栈
 			if (haveNum){
 				Push(&mNun, re);
 				re = 0;
@@ -89,44 +92,38 @@ double GetResult(SignStack mSign, NumberStack mNun,char* mIn) {
 				power = 0;
 			}
 
-			//入栈需判断与栈顶符号的优先级,高于栈顶元素时入栈
-			//printf("The top is %c\n", *mIn);
 			Scan = SdInput(&mIn);
-			//printf("The end is %c\n", *mIn);
 			if (mSign.top != -1) {//字符栈非空时需要判断是否入栈
 				if (NeedPush(&mSign, Scan, &PopLeft)) {
-					PushSign(&mSign, Scan);
-					
+					PushSign(&mSign, Scan);	
 				}
 				else {
-					/*需要进行出栈，运算，最后运算符的进栈操作‘+ - * / （ ） =’
-					  栈顶元素需要出栈，接下来判断所有需要出栈的值
-					  并且在出栈操作时进行运算*/
-					/*需要对左右括号进行单独判断*/
+					/*字符栈出栈，运算，Scan进栈*/
+					/*判断所有需要出栈的值 并且在出栈操作时进行运算*/
+				    /*需要对左右括号进行单独判断*/  
 					do {
 						PopLeft = false;
-						PrintStack(&mNun);
-						PrintSignStack(&mSign);
-
-						PopSign(&mSign, &e);//e为需要对m和n进行的操作
+						PopSign(&mSign, &e);
 						if (e == ')') {
 							PopLeft = true;
 						}
-						
+
 						if (NeedCalcular(e)) {
 							OpTopSign = false;
 							Pop(&mNun, &m);
 							Pop(&mNun, &n);
-							double mRe = Calcular(m, n, e, &OpTopSign);///暂时定为int之后进行更改
-							if (OpTopSign) {//栈顶元素为m,若返回的OpTopSign为true则需要将n压栈
+							double mRe = Calcular(m, n, e, &OpTopSign);
+							
+							if (OpTopSign) {//若只对栈顶元素进行了计算则需要将n入栈
 								Push(&mNun, n);
 							}
 							Push(&mNun, mRe);
 							e = 0;
 						}
-					} while (!NeedPush(&mSign, Scan,&PopLeft));
+					} while (!NeedPush(&mSign, Scan, &PopLeft));
 					PushSign(&mSign, Scan);
 				}
+				
 			}else {
 				PushSign(&mSign, Scan);
 			}
@@ -188,22 +185,6 @@ char SdInput(char** mIn) {
 	}
 }
 
-void PrintSignStack(SignStack* S) {
-	int prim = S->top;
-	while (prim!=-1)
-	{		
-		prim--;
-	}
-}
-
-void PrintStack(NumberStack* S)
-{
-	int prim = S->top;
-	while (prim!=-1)
-	{		
-		prim--;
-	}
-}
 bool NeedCalcular(char sign)
 {
 	switch (sign)
@@ -248,7 +229,6 @@ double Calcular(double m, double n, char sign, bool* OpTopSign) {//m为栈顶元素
 		return pow(n,m);
 	case 'c':
 		*OpTopSign = true;
-		printf("cos(%lf)\n",m);
 		return cos(m);
 	case 's':
 		*OpTopSign = true;
@@ -268,9 +248,9 @@ bool NeedPush(SignStack* S, char e,bool* popLeft)
 {
 	
 	if ((Priority(S->Sign[S->top])< Priority(e))||S->top==-1||((S->Sign[S->top] == '(') &&(*popLeft==false ))) {
-		return true;//true时执行进栈操作
+		return true;//true时执行e的进栈操作
 	}
-	else if (((S->Sign[S->top] == '(') && (*popLeft == true))) {//需要将左括号出栈
+	else if (((S->Sign[S->top] == '(') && (*popLeft == true))) {//右括号出现时需要将左括号出栈
 		*popLeft = false;
 		return false;
 	}
@@ -324,10 +304,8 @@ bool PopSign(SignStack* S, char* e)
 int Priority(char n) {
 	if (n == '=')
 		return 0;
-	
-	if (n == 's' || n == 'c' || n == 't' || n == 'g' || n == 'n')
+	if (n == 's' || n == 'c' || n == 'g' || n == 'n')
 		return 1;
-
 	if (n == '+' || n == '-')
 		return 2;
 	if (n == '*' || n == '/')
