@@ -1,0 +1,110 @@
+#include <stdio.h>
+#include <malloc.h>
+#include <string>
+
+constexpr auto MAXSIZE = 40;;
+/* 顺序栈结构 */
+typedef struct
+{
+	char Sign[MAXSIZE];
+	int top; /* 用于栈顶指针 */
+}SignStack;
+
+bool GetResult(SignStack mSign, char* IN);
+bool PopSign(SignStack* S, char* e);
+bool PushSign(SignStack* S, char e);
+bool NeedPush(SignStack* S, char e, bool* NeedPopLeft_s, bool* NeedPopLeft_m, bool* NeedPopLeft_l);
+
+int main() {
+	char IN[100];
+	char* mIn = IN;
+	gets_s(IN);
+	SignStack mSign;
+	mSign.top = -1;
+
+	if (GetResult(mSign, mIn))
+		printf("True\n");
+	else
+		printf("false\n");
+	return 0;
+}
+
+bool GetResult(SignStack mSign, char* mIn) {
+	char Scan,e;
+	bool NeedPopLeft_s ,NeedPopLeft_m ,NeedPopLeft_l;//是否需要将字符栈中的字符弹出直到出现匹配的左括号
+	bool IsRight = true;
+	do {
+		Scan = *mIn;
+
+			if (mSign.top != -1) {//字符栈非空时需要判断是否入栈
+				if (Scan=='('||Scan=='['||Scan=='{'){
+					PushSign(&mSign, Scan);
+				}
+				else {
+					NeedPopLeft_s = false;
+					NeedPopLeft_m = false;
+					NeedPopLeft_l = false;
+					if (Scan == ')') NeedPopLeft_s = true;
+					if (Scan == ']') NeedPopLeft_m = true;
+					if (Scan == '}') NeedPopLeft_l = true;
+
+					while (NeedPush(&mSign, Scan, &NeedPopLeft_s, &NeedPopLeft_m, &NeedPopLeft_l)) {
+						PopSign(&mSign, &e);
+					}
+
+					if (NeedPopLeft_s == true || NeedPopLeft_m == true || NeedPopLeft_l == true) {
+						IsRight = false;
+					}
+				}
+			}
+			else 
+				PushSign(&mSign, Scan);
+		mIn++;
+	} while (*mIn != '\0');
+
+	return IsRight;
+}
+
+
+bool NeedPush(SignStack* S, char e, bool *NeedPopLeft_s, bool* NeedPopLeft_m, bool* NeedPopLeft_l)
+{
+	/*当 此时栈顶为 '(' 且 NeedPop ( 为false 时，执行字符e 的进栈操作*/
+	if ( S->top == -1 || (e=='(')||e=='['||e=='{') {
+		return true;//true时执行e的进栈操作
+	}
+	else if (((S->Sign[S->top] == '(') && (*NeedPopLeft_s == true))) {
+		*NeedPopLeft_s = false;
+		return false;//false时将对应的左括号出栈
+	}
+	else if (((S->Sign[S->top] == '[') && (*NeedPopLeft_m == true))) {
+		*NeedPopLeft_m = false;
+		return false;
+	}
+	else if(((S->Sign[S->top] == '{') && (*NeedPopLeft_l == true))){
+		*NeedPopLeft_l = false;
+		return false;
+	}
+	else {
+		return false;
+	}
+}
+
+bool PushSign(SignStack* S, char e)
+{
+	if (S->top == MAXSIZE - 1) /* 栈满 */
+	{
+		return false;
+	}
+	S->top++;				/* 栈顶指针增加一 */
+	S->Sign[S->top] = e;  /* 将新插入元素赋值给栈顶空间 */
+	return true;
+}
+
+bool PopSign(SignStack* S, char* e)
+{
+	if (S->top == -1)
+		return false;
+	*e = S->Sign[S->top];	/* 将要删除的栈顶元素赋值给e */
+	S->top--;				/* 栈顶指针减一 */
+	return true;
+}
