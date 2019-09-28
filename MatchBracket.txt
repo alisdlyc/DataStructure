@@ -3,6 +3,7 @@
 #include <string>
 
 constexpr auto MAXSIZE = 40;;
+
 /* 顺序栈结构 */
 typedef struct
 {
@@ -10,11 +11,11 @@ typedef struct
 	int top; /* 用于栈顶指针 */
 }SignStack;
 
-bool GetResult(SignStack mSign, char* IN);
-bool PopSign(SignStack* S, char* e);
-bool PushSign(SignStack* S, char e);
-bool NeedPush(SignStack* S, char e, bool* NeedPopLeft_s, bool* NeedPopLeft_m, bool* NeedPopLeft_l);
-bool BracketPop(SignStack* S, bool* NeedPopLeft_s, bool* NeedPopLeft_m, bool* NeedPopLeft_l);
+bool GetResult(SignStack mSign, char* IN);	/*输出结果*/
+bool PopSign(SignStack* S, char* e);		/*若栈不空，将栈顶元素赋值给e,删除栈顶元素*/
+bool PushSign(SignStack* S, char e);		/*若栈未满，添加元素e到栈顶*/
+bool NeedPush(SignStack* S, char e, bool* s, bool* m, bool* l);/*判断字符e是否需要进栈*/
+bool BracketPop(SignStack* S, bool* s, bool* m, bool* l);	   /*判断括号是否正确配对*/
 
 int main() {
 	char IN[100];
@@ -32,21 +33,25 @@ int main() {
 
 bool GetResult(SignStack mSign, char* mIn) {
 	char Scan,e;
-	bool NeedPopLeft_s ,NeedPopLeft_m ,NeedPopLeft_l;//是否需要将字符栈中的字符弹出直到出现匹配的左括号
+	bool NeedPopLeft_s ,NeedPopLeft_m ,NeedPopLeft_l;
 	bool IsRight = true;
 	do {
 		Scan = *mIn;
 
-			if (mSign.top != -1) {//字符栈非空时需要判断是否入栈
-				if (Scan=='('||Scan=='['||Scan=='{'){//为左括号时入栈
+			/*字符栈非空时需要判断是否入栈*/
+			if (mSign.top != -1) {
+
+				/*输入为左括号时入栈*/
+				if (Scan=='('||Scan=='['||Scan=='{'){
 					PushSign(&mSign, Scan);
 				}
 				else {
-					NeedPopLeft_s = false;//是否需要将左括号出栈
+					NeedPopLeft_s = false;
 					NeedPopLeft_m = false;
 					NeedPopLeft_l = false;
 
-					if (Scan == ')') NeedPopLeft_s = true;//输入为右括号时需要匹配与之相对的左括号，并出栈
+					/*输入为右括号时需要匹配与之相对的左括号，并出栈*/
+					if (Scan == ')') NeedPopLeft_s = true;
 					if (Scan == ']') NeedPopLeft_m = true;
 					if (Scan == '}') NeedPopLeft_l = true;
 					
@@ -61,6 +66,7 @@ bool GetResult(SignStack mSign, char* mIn) {
 		mIn++;
 	} while (*mIn != '\0');
 
+	/*所有括号匹配完成之后，栈应为空*/
 	if (mSign.top != -1)
 		IsRight = false;
 
@@ -68,7 +74,9 @@ bool GetResult(SignStack mSign, char* mIn) {
 }
 bool BracketPop(SignStack* mSign, bool* NeedPopLeft_s, bool* NeedPopLeft_m, bool* NeedPopLeft_l) {
 	bool prim=false;
-	while ((*NeedPopLeft_s || *NeedPopLeft_m || *NeedPopLeft_l)) {//有需要匹配的括号
+
+	/*将字符栈中的字符弹出直到出现匹配的左括号*/
+	while ((*NeedPopLeft_s || *NeedPopLeft_m || *NeedPopLeft_l)) {
 		char e;
 		prim=PopSign(mSign, &e);
 		if (e == '(')
@@ -90,13 +98,13 @@ bool PushSign(SignStack* S, char e)
 		return false;
 	}
 	S->top++;				/* 栈顶指针增加一 */
-	S->Sign[S->top] = e;  /* 将新插入元素赋值给栈顶空间 */
+	S->Sign[S->top] = e;	/* 将新插入元素赋值给栈顶空间 */
 	return true;
 }
 
 bool NeedPush(SignStack* S, char e, bool *NeedPopLeft_s, bool* NeedPopLeft_m, bool* NeedPopLeft_l)
 {
-	/*当 此时栈顶为 '(' 且 NeedPop ( 为false 时，执行字符e 的进栈操作*/
+	/*当 此时栈顶为 '(' 且 NeedPop为false 时，执行字符e 的进栈操作*/
 	if ( S->top == -1 || (e=='(')||e=='['||e=='{') {
 		return true;//true时执行e的进栈操作
 	}
