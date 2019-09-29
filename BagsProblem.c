@@ -1,6 +1,6 @@
 #include<stdio.h>
 #include <corecrt_malloc.h>
-void PutW(int* p,int* OutP,int weight,int sum,int LenOut,int W,int n);
+void PutW(int* p, int* OutP, int weight, int sum, int LenOut, int W, int n);
 void Show(int* OutP, int LenOut);
 int main() {
 	int n, weight;
@@ -10,27 +10,27 @@ int main() {
 	for (int i = 0; i < n; i++) {
 		scanf_s("%d", &p[i]);
 	}
-	PutW(p, OutP, weight, 0, 0, 0,n);
+	PutW(p, OutP, weight, 0, 0, 0, n);
 }
 
 /*判断第W块是否可以添加*/
 /*若可以，添加，Put第W+1块*/
-/*若不行,不添加,Put第W+1块*/
-void PutW(int* p, int* OutP, int weight, int sum, int LenOut,int W,int n)
+/*若不行,不添加,检查下一块*/
+void PutW(int* p, int* OutP, int weight, int sum, int LenOut, int W, int n)
 {
 	int* WOb;
 	int* SOb = OutP + LenOut;
-	for (int i = W; i < n; i++) {
-		WOb = p + i;
+	for (int i = W+1; i <= n; i++) {
+		WOb = p + i-1;
 		if (sum + *WOb < weight) {
 			/*W可行*/
 			*SOb = *WOb;
-			PutW(p,OutP,weight,sum+ *WOb,LenOut+1,W+i,n);
+			PutW(p, OutP, weight, sum + *WOb, LenOut + 1, W + i, n);
 		}
 		if (sum + *WOb == weight) {
 			sum += *WOb;
 			*SOb = *WOb;
-			Show(OutP, LenOut+1);
+			Show(OutP, LenOut + 1);
 		}
 	}
 }
