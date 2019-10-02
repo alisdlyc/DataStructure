@@ -2,40 +2,40 @@
 #include <malloc.h>
 #include <string>
 #include <math.h>
-constexpr auto MAXSIZE = 40;;//¶¨Òå×Ö·ûÕ»ºÍÊı×ÖÕ»µÄ×î´ó³¤¶È
-/* Ë³ĞòÕ»½á¹¹ */
+constexpr auto MAXSIZE = 40;;//å®šä¹‰å­—ç¬¦æ ˆå’Œæ•°å­—æ ˆçš„æœ€å¤§é•¿åº¦
+/* é¡ºåºæ ˆç»“æ„ */
 typedef struct
 {
 	char Sign[MAXSIZE];
-	int top; /* ÓÃÓÚÕ»¶¥Ö¸Õë */
+	int top; /* ç”¨äºæ ˆé¡¶æŒ‡é’ˆ */
 }SignStack;
 
 typedef struct
 {
 	double Number[MAXSIZE];
-	int top;/* ÓÃÓÚÕ»¶¥Ö¸Õë*/
+	int top;/* ç”¨äºæ ˆé¡¶æŒ‡é’ˆ*/
 }NumberStack;
 
-int Priority(char n);//·µ»Ø²Ù×÷·ûµÄÓÅÏÈ¼¶
-double GetResult(SignStack mSign, NumberStack mNum,char* IN);/*¶ÔÊäÈë½øĞĞ¼ÆËã²¢·µ»Ø½á¹û*/
+int Priority(char n);//è¿”å›æ“ä½œç¬¦çš„ä¼˜å…ˆçº§
+double GetResult(SignStack mSign, NumberStack mNum,char* IN);/*å¯¹è¾“å…¥è¿›è¡Œè®¡ç®—å¹¶è¿”å›ç»“æœ*/
 
-bool Pop(NumberStack* S, double* e);/*¶ÁÈ¡Õ»¶¥ÔªËØ²¢É¾³ı£¬È»ºó¸³Öµ¸øe*/
-bool PopSign(SignStack* S, char* e);/*¶ÁÈ¡Õ»¶¥ÔªËØ²¢É¾³ı£¬È»ºó¸³Öµ¸øe*/
-bool Push(NumberStack* S, double e);/*½«eÈëÕ»*/
-bool PushSign(SignStack* S, char e);/*½«eÈëÕ»*/
+bool Pop(NumberStack* S, double* e);/*è¯»å–æ ˆé¡¶å…ƒç´ å¹¶åˆ é™¤ï¼Œç„¶åèµ‹å€¼ç»™e*/
+bool PopSign(SignStack* S, char* e);/*è¯»å–æ ˆé¡¶å…ƒç´ å¹¶åˆ é™¤ï¼Œç„¶åèµ‹å€¼ç»™e*/
+bool Push(NumberStack* S, double e);/*å°†eå…¥æ ˆ*/
+bool PushSign(SignStack* S, char e);/*å°†eå…¥æ ˆ*/
 
-bool IsNumber(char c,bool* haveDot);		  /*ÅĞ¶Ï×Ö·ûcÊÇ·ñÎªÊı×Ö,ÒÔ¼°ÊÇ·ñÓĞĞ¡ÊıµÄÊäÈë*/
-bool NeedCalcular(char c);					  /*ÅĞ¶Ï×Ö·ûcÊÇ·ñĞèÒªÖ´ĞĞ¼ÆËã*/
-char SdInput(char** mIn);					  /*ÅĞ¶Ïsin cos lg ln + - * / ( )µÈ²Ù×÷·ûµÄÊäÈë*/
-bool NeedPush(SignStack* S, char e, bool* shouldhaveleft);			/*ÅĞ¶Ïµ±Ç°×Ö·ûeÊÇ·ñĞèÒªÖ´ĞĞÈëÕ»²Ù×÷*/
+bool IsNumber(char c,bool* haveDot);		  /*åˆ¤æ–­å­—ç¬¦cæ˜¯å¦ä¸ºæ•°å­—,ä»¥åŠæ˜¯å¦æœ‰å°æ•°çš„è¾“å…¥*/
+bool NeedCalcular(char c);					  /*åˆ¤æ–­å­—ç¬¦cæ˜¯å¦éœ€è¦æ‰§è¡Œè®¡ç®—*/
+char SdInput(char** mIn);					  /*åˆ¤æ–­sin cos lg ln + - * / ( )ç­‰æ“ä½œç¬¦çš„è¾“å…¥*/
+bool NeedPush(SignStack* S, char e, bool* shouldhaveleft);			/*åˆ¤æ–­å½“å‰å­—ç¬¦eæ˜¯å¦éœ€è¦æ‰§è¡Œå…¥æ ˆæ“ä½œ*/
 double Calcular(double m, double n, char sign, bool* OpTopSign);
-/*¸ù¾İ²Ù×÷·ûsign¶Ôm,n½øĞĞ¼ÆËãÇÒ·µ»Ø½á¹û*/
-/*ÈôCalcularÖ»¶ÔÕ»¶¥ÔªËØ½øĞĞ¼ÆËã,Èçsin,ÔòOpTopSignÎªtrue*/
+/*æ ¹æ®æ“ä½œç¬¦signå¯¹m,nè¿›è¡Œè®¡ç®—ä¸”è¿”å›ç»“æœ*/
+/*è‹¥Calcularåªå¯¹æ ˆé¡¶å…ƒç´ è¿›è¡Œè®¡ç®—,å¦‚sin,åˆ™OpTopSignä¸ºtrue*/
 
-/*ÊäÈë¹æ·¶*/
-/*ÊäÈë²Ù×÷Ê±×óÓÒÀ¨ºÅÓ¦¸ÃÎªÓ¢ÎÄÊäÈë×´Ì¬ÏÂµÄ(),±í´ïÊ½ÒÔµÈºÅ½áÊø*/
-/*sin,cos,lg,lnµÄÊäÈëĞèÒª¼ÓÉÏÀ¨ºÅ£¬¼´sin(x),cos(x),log(x),ln(x)*/
-/*Èç 1+2*3/4-(sin(0.215)+cos(1.25))= */
+/*è¾“å…¥è§„èŒƒ*/
+/*è¾“å…¥æ“ä½œæ—¶å·¦å³æ‹¬å·åº”è¯¥ä¸ºè‹±æ–‡è¾“å…¥çŠ¶æ€ä¸‹çš„(),è¡¨è¾¾å¼ä»¥ç­‰å·ç»“æŸ*/
+/*sin,cos,lg,lnçš„è¾“å…¥éœ€è¦åŠ ä¸Šæ‹¬å·ï¼Œå³sin(x),cos(x),log(x),ln(x)*/
+/*å¦‚ 1+2*3/4-(sin(0.215)+cos(1.25))= */
 int main() {
 	char IN[100];
 	char* mIn = IN;
@@ -47,7 +47,7 @@ int main() {
 
 	gets_s(IN);
 	sum = GetResult(mSign, mNum,mIn);
-	printf("The result of the formula is %.4f\n", sum);//µ±Ç°Îª±£ÁôËÄÎ»Ğ¡Êı
+	printf("The result of the formula is %.4f\n", sum);//å½“å‰ä¸ºä¿ç•™å››ä½å°æ•°
 	return 0;
 }
 
@@ -55,19 +55,19 @@ double GetResult(SignStack mSign, NumberStack mNun,char* mIn) {
 	int power = 0;
 	char Scan,e;
 	double sum = 0,  re = 0, m,n;
-	bool haveNum = false;	//µ±Ç°×Ö·ûÊäÈëÖ®Ç°ÊÇ·ñÓĞÊı×ÖÎ´½øÕ»
-	bool PopLeft = false;	//ÊÇ·ñĞèÒª½«×Ö·ûÕ»ÖĞµÄ×óÀ¨ºÅµ¯³ö,µ±ÓĞÓÒÀ¨ºÅ³öÏÖÊ±,Îªtrue,´ËÊ±¶ÔÓ¦µÄ×óÀ¨ºÅÓ¦³öÕ»
-	bool OpTopSign = false;	//ÊÇ·ñÖ»¶ÔÕ»¶¥ÔªËØ½øĞĞ²Ù×÷£¬Èçsin,cosº¯Êı
-	bool haveDot = false;	//ÊÇ·ñÓĞĞ¡Êıµã£¬ÈôÎªtrueÔòÖ®ºó¶ÁÈëµÄÊı×ÖÎªĞ¡Êı
+	bool haveNum = false;	//å½“å‰å­—ç¬¦è¾“å…¥ä¹‹å‰æ˜¯å¦æœ‰æ•°å­—æœªè¿›æ ˆ
+	bool PopLeft = false;	//æ˜¯å¦éœ€è¦å°†å­—ç¬¦æ ˆä¸­çš„å·¦æ‹¬å·å¼¹å‡º,å½“æœ‰å³æ‹¬å·å‡ºç°æ—¶,ä¸ºtrue,æ­¤æ—¶å¯¹åº”çš„å·¦æ‹¬å·åº”å‡ºæ ˆ
+	bool OpTopSign = false;	//æ˜¯å¦åªå¯¹æ ˆé¡¶å…ƒç´ è¿›è¡Œæ“ä½œï¼Œå¦‚sin,coså‡½æ•°
+	bool haveDot = false;	//æ˜¯å¦æœ‰å°æ•°ç‚¹ï¼Œè‹¥ä¸ºtrueåˆ™ä¹‹åè¯»å…¥çš„æ•°å­—ä¸ºå°æ•°
 	
 
 	do {
 		
 		Scan = *mIn;
-		if (IsNumber(Scan,&haveDot) == true)//µ±Ç°×Ö·ûÎªÊı×Ö
+		if (IsNumber(Scan,&haveDot) == true)//å½“å‰å­—ç¬¦ä¸ºæ•°å­—
 		{
 
-			if (haveDot) {					//´æÔÚĞ¡Êıµã£¬Ö®ºóµÄÊı×ÖÊäÈëÎªĞ¡Êı²¿·Ö
+			if (haveDot) {					//å­˜åœ¨å°æ•°ç‚¹ï¼Œä¹‹åçš„æ•°å­—è¾“å…¥ä¸ºå°æ•°éƒ¨åˆ†
 				if (power == 0) {
 					power++;
 				}
@@ -82,8 +82,8 @@ double GetResult(SignStack mSign, NumberStack mNun,char* mIn) {
 			haveNum = true;
 		}
 		else {
-			//µ±Ç°×Ö·ûÎª²Ù×÷·û£¬Ğè´æÈë×Ö·ûÕ»
-			//Èç¹ûÉÏÒ»¸öÊı¾İÎªÊı×Ö£¬ÔòÏÈ½«Êı×ÖÈëÕ»
+			//å½“å‰å­—ç¬¦ä¸ºæ“ä½œç¬¦ï¼Œéœ€å­˜å…¥å­—ç¬¦æ ˆ
+			//å¦‚æœä¸Šä¸€ä¸ªæ•°æ®ä¸ºæ•°å­—ï¼Œåˆ™å…ˆå°†æ•°å­—å…¥æ ˆ
 			if (haveNum){
 				Push(&mNun, re);
 				re = 0;
@@ -93,14 +93,14 @@ double GetResult(SignStack mSign, NumberStack mNun,char* mIn) {
 			}
 
 			Scan = SdInput(&mIn);
-			if (mSign.top != -1) {//×Ö·ûÕ»·Ç¿ÕÊ±ĞèÒªÅĞ¶ÏÊÇ·ñÈëÕ»
+			if (mSign.top != -1) {//å­—ç¬¦æ ˆéç©ºæ—¶éœ€è¦åˆ¤æ–­æ˜¯å¦å…¥æ ˆ
 				if (NeedPush(&mSign, Scan, &PopLeft)) {
 					PushSign(&mSign, Scan);	
 				}
 				else {
-					/*×Ö·ûÕ»³öÕ»£¬ÔËËã£¬Scan½øÕ»*/
-					/*ÅĞ¶ÏËùÓĞĞèÒª³öÕ»µÄÖµ ²¢ÇÒÔÚ³öÕ»²Ù×÷Ê±½øĞĞÔËËã*/
-				    /*ĞèÒª¶Ô×óÓÒÀ¨ºÅ½øĞĞµ¥¶ÀÅĞ¶Ï*/  
+					/*å­—ç¬¦æ ˆå‡ºæ ˆï¼Œè¿ç®—ï¼ŒScanè¿›æ ˆ*/
+					/*åˆ¤æ–­æ‰€æœ‰éœ€è¦å‡ºæ ˆçš„å€¼ å¹¶ä¸”åœ¨å‡ºæ ˆæ“ä½œæ—¶è¿›è¡Œè¿ç®—*/
+				    /*éœ€è¦å¯¹å·¦å³æ‹¬å·è¿›è¡Œå•ç‹¬åˆ¤æ–­*/  
 					do {
 						PopLeft = false;
 						PopSign(&mSign, &e);
@@ -114,7 +114,7 @@ double GetResult(SignStack mSign, NumberStack mNun,char* mIn) {
 							Pop(&mNun, &n);
 							double mRe = Calcular(m, n, e, &OpTopSign);
 							
-							if (OpTopSign) {//ÈôÖ»¶ÔÕ»¶¥ÔªËØ½øĞĞÁË¼ÆËãÔòĞèÒª½«nÈëÕ»
+							if (OpTopSign) {//è‹¥åªå¯¹æ ˆé¡¶å…ƒç´ è¿›è¡Œäº†è®¡ç®—åˆ™éœ€è¦å°†nå…¥æ ˆ
 								Push(&mNun, n);
 							}
 							Push(&mNun, mRe);
@@ -164,20 +164,20 @@ char SdInput(char** mIn) {
 		return ')';
 	case's':
 		*mIn += 2;
-		return 's';//ÓÃsÀ´´ú±ísinº¯Êı
+		return 's';//ç”¨sæ¥ä»£è¡¨sinå‡½æ•°
 	case'c':
 		*mIn += 3;
-		return 'c';//ÓÃcÀ´´ú±ícosº¯Êı
+		return 'c';//ç”¨cæ¥ä»£è¡¨coså‡½æ•°
 	case'l':
 		*mIn+=1;
 		if (**mIn == 'n') {
-			return 'n';//ÓÃnÀ´´ú±ílnº¯Êı
+			return 'n';//ç”¨næ¥ä»£è¡¨lnå‡½æ•°
 		}else {
 			*mIn+=1;
-			return 'g';//ÓÃgÀ´´ú±ílogº¯Êı
+			return 'g';//ç”¨gæ¥ä»£è¡¨logå‡½æ•°
 		}
 	case '^':
-		return '^';//³Ë·½
+		return '^';//ä¹˜æ–¹
 	case '=':
 		return '=';
 	default:
@@ -213,7 +213,7 @@ bool NeedCalcular(char sign)
 	return false;
 }
 
-double Calcular(double m, double n, char sign, bool* OpTopSign) {//mÎªÕ»¶¥ÔªËØ
+double Calcular(double m, double n, char sign, bool* OpTopSign) {//mä¸ºæ ˆé¡¶å…ƒç´ 
 	switch (sign)
 	{
 	case '+':
@@ -248,9 +248,9 @@ bool NeedPush(SignStack* S, char e,bool* popLeft)
 {
 	
 	if ((Priority(S->Sign[S->top])< Priority(e))||S->top==-1||((S->Sign[S->top] == '(') &&(*popLeft==false ))) {
-		return true;//trueÊ±Ö´ĞĞeµÄ½øÕ»²Ù×÷
+		return true;//trueæ—¶æ‰§è¡Œeçš„è¿›æ ˆæ“ä½œ
 	}
-	else if (((S->Sign[S->top] == '(') && (*popLeft == true))) {//ÓÒÀ¨ºÅ³öÏÖÊ±ĞèÒª½«×óÀ¨ºÅ³öÕ»
+	else if (((S->Sign[S->top] == '(') && (*popLeft == true))) {//å³æ‹¬å·å‡ºç°æ—¶éœ€è¦å°†å·¦æ‹¬å·å‡ºæ ˆ
 		*popLeft = false;
 		return false;
 	}
@@ -259,36 +259,36 @@ bool NeedPush(SignStack* S, char e,bool* popLeft)
 	}
 }
 
-/* ²åÈëÔªËØeÎªĞÂµÄÕ»¶¥ÔªËØ */
+/* æ’å…¥å…ƒç´ eä¸ºæ–°çš„æ ˆé¡¶å…ƒç´  */
 bool Push(NumberStack* S, double e)
 {
-	if (S->top == MAXSIZE - 1) /* Õ»Âú */
+	if (S->top == MAXSIZE - 1) /* æ ˆæ»¡ */
 	{
 		return false;
 	}
-	S->top++;				/* Õ»¶¥Ö¸ÕëÔö¼ÓÒ» */
-	S->Number[S->top] = e;  /* ½«ĞÂ²åÈëÔªËØ¸³Öµ¸øÕ»¶¥¿Õ¼ä */
+	S->top++;				/* æ ˆé¡¶æŒ‡é’ˆå¢åŠ ä¸€ */
+	S->Number[S->top] = e;  /* å°†æ–°æ’å…¥å…ƒç´ èµ‹å€¼ç»™æ ˆé¡¶ç©ºé—´ */
 	return true;
 }
 
 bool PushSign(SignStack* S, char e)
 {
-	if (S->top == MAXSIZE - 1) /* Õ»Âú */
+	if (S->top == MAXSIZE - 1) /* æ ˆæ»¡ */
 	{
 		return false;
 	}
-	S->top++;				/* Õ»¶¥Ö¸ÕëÔö¼ÓÒ» */
-	S->Sign[S->top] = e;  /* ½«ĞÂ²åÈëÔªËØ¸³Öµ¸øÕ»¶¥¿Õ¼ä */
+	S->top++;				/* æ ˆé¡¶æŒ‡é’ˆå¢åŠ ä¸€ */
+	S->Sign[S->top] = e;  /* å°†æ–°æ’å…¥å…ƒç´ èµ‹å€¼ç»™æ ˆé¡¶ç©ºé—´ */
 	return true;
 }
 
-/* ÈôÕ»²»¿Õ£¬ÔòÉ¾³ıSµÄÕ»¶¥ÔªËØ£¬ÓÃe·µ»ØÆäÖµ£¬²¢·µ»Øtrue£»·ñÔò·µ»Øfalse */
+/* è‹¥æ ˆä¸ç©ºï¼Œåˆ™åˆ é™¤Sçš„æ ˆé¡¶å…ƒç´ ï¼Œç”¨eè¿”å›å…¶å€¼ï¼Œå¹¶è¿”å›trueï¼›å¦åˆ™è¿”å›false */
 bool Pop(NumberStack* S, double* e)
 {
 	if (S->top == -1)
 		return false;
-	*e = S->Number[S->top];	/* ½«ÒªÉ¾³ıµÄÕ»¶¥ÔªËØ¸³Öµ¸øe */
-	S->top--;				/* Õ»¶¥Ö¸Õë¼õÒ» */
+	*e = S->Number[S->top];	/* å°†è¦åˆ é™¤çš„æ ˆé¡¶å…ƒç´ èµ‹å€¼ç»™e */
+	S->top--;				/* æ ˆé¡¶æŒ‡é’ˆå‡ä¸€ */
 	return true;
 }
 
@@ -296,17 +296,17 @@ bool PopSign(SignStack* S, char* e)
 {
 	if (S->top == -1)
 		return false;
-	*e = S->Sign[S->top];	/* ½«ÒªÉ¾³ıµÄÕ»¶¥ÔªËØ¸³Öµ¸øe */
-	S->top--;				/* Õ»¶¥Ö¸Õë¼õÒ» */
+	*e = S->Sign[S->top];	/* å°†è¦åˆ é™¤çš„æ ˆé¡¶å…ƒç´ èµ‹å€¼ç»™e */
+	S->top--;				/* æ ˆé¡¶æŒ‡é’ˆå‡ä¸€ */
 	return true;
 }
 
 int Priority(char n) {
 	if (n == '=')
 		return 0;
-	if (n == 's' || n == 'c' || n == 'g' || n == 'n')
-		return 1;
 	if (n == '+' || n == '-')
+		return 1;
+	if (n == 's' || n == 'c' || n == 'g' || n == 'n')
 		return 2;
 	if (n == '*' || n == '/')
 		return 3;
