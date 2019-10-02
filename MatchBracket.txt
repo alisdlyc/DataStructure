@@ -1,7 +1,7 @@
 #include <stdio.h>
 #include <malloc.h>
 #include <string>
-
+/*匹配输入的括号是否正确匹配*/
 constexpr auto MAXSIZE = 40;;
 
 /* 顺序栈结构 */
