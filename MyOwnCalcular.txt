@@ -304,9 +304,9 @@ bool PopSign(SignStack* S, char* e)
 int Priority(char n) {
 	if (n == '=')
 		return 0;
-	if (n == 's' || n == 'c' || n == 'g' || n == 'n')
-		return 1;
 	if (n == '+' || n == '-')
+		return 1;
+	if (n == 's' || n == 'c' || n == 'g' || n == 'n')
 		return 2;
 	if (n == '*' || n == '/')
 		return 3;
