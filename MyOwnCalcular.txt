@@ -163,7 +163,7 @@ char SdInput(char** mIn) {
 	case')':
 		return ')';
 	case's':
-		*mIn += 2;
+		*mIn += 3;
 		return 's';//用s来代表sin函数
 	case'c':
 		*mIn += 3;
@@ -172,8 +172,9 @@ char SdInput(char** mIn) {
 		*mIn+=1;
 		if (**mIn == 'n') {
 			return 'n';//用n来代表ln函数
-		}else {
-			*mIn+=1;
+		}else if(**mIn=='o')
+		{
+			*mIn+=2;
 			return 'g';//用g来代表log函数
 		}
 	case '^':
