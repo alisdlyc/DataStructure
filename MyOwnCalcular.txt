@@ -37,7 +37,7 @@ double Calcular(double m, double n, char sign, bool* OpTopSign);
 /*sin,cos,lg,ln的输入需要加上括号，即sin(x),cos(x),log(x),ln(x)*/
 /*如 1+2*3/4-(sin(0.215)+cos(1.25))= */
 int main() {
-	char IN[100];
+	qwq:char IN[100];
 	char* mIn = IN;
 	double sum;
 	SignStack mSign;
@@ -48,6 +48,7 @@ int main() {
 	gets_s(IN);
 	sum = GetResult(mSign, mNum,mIn);
 	printf("The result of the formula is %.4f\n", sum);//当前为保留四位小数
+	goto qwq;
 	return 0;
 }
 
@@ -171,6 +172,7 @@ char SdInput(char** mIn) {
 	case'l':
 		*mIn+=1;
 		if (**mIn == 'n') {
+			*mIn += 1;
 			return 'n';//用n来代表ln函数
 		}else if(**mIn=='o')
 		{
