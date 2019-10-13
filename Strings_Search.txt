@@ -1,0 +1,110 @@
+#include<stdio.h>
+#include<string.h>
+#include <malloc.h>
+#define MAXSIZE 40 /* 存储空间初始分配量 */
+
+typedef char String[MAXSIZE + 1]; /*  0号单元存放串的长度 */
+
+/* 返回串的元素个数 */
+int StrLength(String S)
+{
+	return S[0];
+}
+
+/* 用T返回S1和S2联接而成的新串。若未截断，则返回TRUE，否则FALSE */
+bool Concat(String T, char Sub)
+{
+	int i=T[0];
+	if (i < MAXSIZE - 1)
+	{
+		T[i = 1] = Sub;
+		T[0]++;
+		return true;
+	}
+	else {
+		return false;
+	}
+}
+
+/* 用Sub返回串S的第pos个字符起长度为len的字符。 */
+bool SubString(char* Sub, String S, int pos, int len)
+{
+	int i;
+	if (pos<1 || pos>S[0] || len<0 || len>S[0] - pos + 1)
+		return false;
+	
+	*Sub=S[pos+len];
+	return true;
+}
+
+/* 生成一个其值等于chars的串T */
+bool StrAssign(String T, char* chars)
+{
+	int i;
+	if (strlen(chars) > MAXSIZE)
+		return false;
+	else
+	{
+		T[0] = strlen(chars);
+		for (i = 1; i <= T[0]; i++)
+			T[i] = *(chars + i - 1);
+		return true;
+	}
+}
+
+typedef struct OutList
+{
+	char Sub;
+	int Pos;
+	struct OutList* nextPtr;
+}OutList;
+
+int main() {
+	String s, t, r;
+	char input_s[40], input_t[40];
+	printf("请输入串s\n");
+	gets_s(input_s);	
+	char* Sin = input_s;
+	StrAssign(s, Sin);
+
+	printf("请输入串t\n");
+	gets_s(input_t);
+	char* Tin = input_t;
+	StrAssign(t, Tin);
+	r[0] = 0;
+	OutList* HeadPtr=(OutList*)malloc(sizeof(OutList));
+	OutList* CurrentPtr = HeadPtr;
+	for (int i = 1; i <StrLength(s); i++)
+	{
+		bool SInT = false;
+		char SubS;
+		SubString(&SubS, s, i, 1);
+
+		for (int j = 1; j < StrLength(t); j++)
+		{
+			char SubT;
+			SubString(&SubT, t, j, 1);
+			if ((unsigned)SubS==(unsigned)SubT)
+			{
+				SInT = true;
+				break;
+			}
+		}
+	
+		if (!SInT) {
+			OutList* NextPtr = (OutList*)malloc(sizeof(OutList));
+			NextPtr->Sub = SubS;
+			NextPtr->Pos = i;
+			CurrentPtr ->nextPtr= NextPtr;
+			CurrentPtr = NextPtr;
+		}
+		CurrentPtr->nextPtr = NULL;
+	}
+	OutList* Ptr = HeadPtr->nextPtr;
+	while (Ptr!=NULL) {
+		printf("字符为：%c  ", Ptr->Sub);
+		printf("第一次出现在：%d\n", Ptr->Pos);
+		Ptr = Ptr->nextPtr;
+	}
+	return 0;
+}
