@@ -59,23 +59,26 @@ typedef struct OutList
 	struct OutList* nextPtr;
 }OutList;
 
+/*求包含在s中，而不在t中的字符构成的新串r,并且记录每个字符在s中第一次出现的位置*/
 int main() {
 	String s, t, r;
+	r[0] = 0;
+
 	char input_s[40], input_t[40];
 	printf("请输入串s\n");
 	gets_s(input_s);	
-	char* Sin = input_s;
-	StrAssign(s, Sin);
+	StrAssign(s, input_s);
 
 	printf("请输入串t\n");
 	gets_s(input_t);
-	char* Tin = input_t;
-	StrAssign(t, Tin);
-	r[0] = 0;
+	StrAssign(t, input_t);
+
 	OutList* HeadPtr=(OutList*)malloc(sizeof(OutList));
 	OutList* CurrentPtr = HeadPtr;
+
 	for (int i = 1; i <StrLength(s); i++)
 	{
+		/*若S中第i个元素位于T中，则为true*/
 		bool SInT = false;
 		char SubS;
 		SubString(&SubS, s, i, 1);
@@ -91,6 +94,7 @@ int main() {
 			}
 		}
 	
+		/*S中第i个元素不在T中时，记录字符和它的位置信息*/
 		if (!SInT) {
 			OutList* NextPtr = (OutList*)malloc(sizeof(OutList));
 			NextPtr->Sub = SubS;
@@ -100,6 +104,8 @@ int main() {
 		}
 		CurrentPtr->nextPtr = NULL;
 	}
+	
+	/*输出字符串r*/
 	OutList* Ptr = HeadPtr->nextPtr;
 	while (Ptr!=NULL) {
 		printf("字符为：%c  ", Ptr->Sub);
