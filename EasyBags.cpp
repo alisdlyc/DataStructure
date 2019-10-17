@@ -1,26 +1,26 @@
 #include<stdio.h>
-#include <corecrt_malloc.h>
+#include <stdlib.h>
 void PutW(int*,int* , int , int , int , int , int );
 bool IsPut(int* ,int n,int );
 void ShowMark(int* ,int ,int );
 
 int main() {
 	int n, weight;
-	scanf_s("%d%d", &n, &weight);
+	scanf("%d%d", &n, &weight);
 
-	int* p = (int*)malloc(sizeof(int) * n);//´æ´¢ÎïÆ·ÖØÁ¿
-	int* MarkP = (int*)malloc(sizeof(int) * n);//¼ÇÂ¼µ±·ÅÈë±³°üµÄÎïÆ·±êºÅ
+	int* p = (int*)malloc(sizeof(int) * n);//ï¿½æ´¢ï¿½ï¿½Æ·ï¿½ï¿½ï¿½ï¿½
+	int* MarkP = (int*)malloc(sizeof(int) * n);//ï¿½ï¿½Â¼ï¿½ï¿½ï¿½ï¿½ï¿½ë±³ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Æ·ï¿½ï¿½ï¿½
 
 	for (int i = 0; i < n; i++) {
-		scanf_s("%d", &p[i]);
+		scanf("%d", &p[i]);
 	}
 
-	printf("Result£º\n");
+	printf("Resultï¿½ï¿½\n");
 	PutW(p, MarkP, weight, 0, 0, 0, n);
 }
 
-/*BagLoadÎª±³°ü×Ü³ÐÖØ£¬BagCarryWeightÎªµ±Ç°±³°üÖØÁ¿£¬BagCarrySumÎª±³°üÄÚµÄÎïÌåÊý*/
-/*MarkP¼ÇÂ¼±³°üÄÚÎïÌåµÄÏÂ±ê£¬nÎªÎïÌå×ÜÊý*/
+/*BagLoadÎªï¿½ï¿½ï¿½ï¿½ï¿½Ü³ï¿½ï¿½Ø£ï¿½BagCarryWeightÎªï¿½ï¿½Ç°ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½BagCarrySumÎªï¿½ï¿½ï¿½ï¿½ï¿½Úµï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½*/
+/*MarkPï¿½ï¿½Â¼ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Â±ê£¬nÎªï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½*/
 void PutW(int* p, int* MarkP, int BagLoad, int BagCarryWeight, int BagCarrySum, int W, int n)
 {
 	int* WeightObj;						
@@ -28,18 +28,18 @@ void PutW(int* p, int* MarkP, int BagLoad, int BagCarryWeight, int BagCarrySum, 
 
 	for (int i = 1+W; i <= n; i++) {
 
-		//*Èç¹ûiÃ»ÓÐ±»Ìí¼ÓÔò½øÐÐÅÐ¶ÏÊÇ·ñÒªÌí¼Ó*/
+		//*ï¿½ï¿½ï¿½iÃ»ï¿½Ð±ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ð¶ï¿½ï¿½Ç·ï¿½Òªï¿½ï¿½ï¿½ï¿½*/
 		if (!IsPut(MarkP, i, BagCarrySum)) {
 
 			WeightObj = p + i - 1;
 
-			/*ÈôÌí¼ÓÉÏµÚi¸öÎïÌå£¬»¹Ã»´ïµ½±³°ü³ÐÊÜÖØÁ¿£¬ÔòÌí¼ÓµÚi¸öÎïÌå£¬ÅÐ¶ÏÏÂÒ»¸öÎïÌå*/
+			/*ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ïµï¿½iï¿½ï¿½ï¿½ï¿½ï¿½å£¬ï¿½ï¿½Ã»ï¿½ïµ½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Óµï¿½iï¿½ï¿½ï¿½ï¿½ï¿½å£¬ï¿½Ð¶ï¿½ï¿½ï¿½Ò»ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½*/
 			if (BagCarryWeight + *WeightObj < BagLoad) {
 				*MarkOb = i;
 				PutW(p, MarkP, BagLoad, BagCarryWeight + *WeightObj, BagCarrySum + 1, i, n);
 			}
 
-			/*ÈôÌí¼ÓÊ¹µÃÎïÌå×ÜÖØÁ¿µÈÓÚ±³°ü³ÐÖØÔòÊä³ö*/
+			/*ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ê¹ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ú±ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½*/
 			if (BagCarryWeight + *WeightObj == BagLoad) {
 				*MarkOb = i;
 				ShowMark(MarkP, BagCarrySum + 1, n);
@@ -48,10 +48,10 @@ void PutW(int* p, int* MarkP, int BagLoad, int BagCarryWeight, int BagCarrySum, 
 	}
 }
 
-/*ÅÐ¶Ï±àºÅÎªnµÄÎïÌåÊÇ·ñÒÑ¾­ÔÚMarkPÖÐ*/
+/*ï¿½Ð¶Ï±ï¿½ï¿½Îªnï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ç·ï¿½ï¿½Ñ¾ï¿½ï¿½ï¿½MarkPï¿½ï¿½*/
 bool IsPut(int* MarkP, int n, int LenOut) {
 	int* Mark = MarkP;
-	bool prim = false;//²»ÔÚÊ±primÎªfalse
+	bool prim = false;//ï¿½ï¿½ï¿½ï¿½Ê±primÎªfalse
 	for (int i = 0; i < LenOut; i++) {
 		if (*Mark == n)
 			prim = true;
@@ -60,7 +60,7 @@ bool IsPut(int* MarkP, int n, int LenOut) {
 	return prim;
 }
 
-/*ÎïÌåµÄÏÂ±ê´Ó1¿ªÊ¼*/
+/*ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Â±ï¿½ï¿½1ï¿½ï¿½Ê¼*/
 void ShowMark(int* MarkP, int LenOut,int n)
 {
 	int* ShowMark = MarkP;
