@@ -1,0 +1,21 @@
+{
+    "version": "2.0.0",
+    "tasks": [
+      {
+        "label": "task",
+        "type": "shell",
+        "command": "g++",
+        "args": [
+          "-ggdb",
+          "\"${file}\"",
+          "--std=c++11",
+          "-o",
+          "\"${fileDirname}\\${fileBasenameNoExtension}.exe\""
+        ],
+        "group": {
+          "kind": "build",
+          "isDefault": true
+        }
+      }
+    ]
+  }
