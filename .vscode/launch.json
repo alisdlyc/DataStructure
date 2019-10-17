@@ -1,0 +1,20 @@
+{
+    "version": "0.2.0",
+    "configurations": [
+      
+        {
+            "name": "C++ Launch",
+            "type": "cppdbg", 
+            "request": "launch",
+            "program": "${workspaceRoot}/${fileBasenameNoExtension}.exe",
+            "stopAtEntry": false,
+            "externalConsole": true,
+            "cwd":"${workspaceFolder}",
+            "preLaunchTask": "task",
+            "windows": {
+              "MIMode": "gdb",
+              "miDebuggerPath": "C:\\mingw64\\bin\\gdb.exe"
+            }
+          }
+    ]
+}

@@ -1,22 +1,24 @@
 #include<stdio.h>
-#include <corecrt_malloc.h>
+#include <stdlib.h>
+#include<stdbool.h>
 void PutW(int*, int*, int, int, int, int, int);
 bool IsPut(int*, int n, int);
 void ShowMark(int*, int, int);
 
 int main() {
 	int n, weight;
-	scanf_s("%d%d", &n, &weight);
+	scanf("%d%d", &n, &weight);
 
 	int* p = (int*)malloc(sizeof(int) * n);//存储物品重量
 	int* MarkP = (int*)malloc(sizeof(int) * n);//记录当放入背包的物品标号
 
 	for (int i = 0; i < n; i++) {
-		scanf_s("%d", &p[i]);
+		scanf("%d", &p[i]);
 	}
 
-	printf("Result：\n");
+	printf("Result\n");
 	PutW(p, MarkP, weight, 0, 0, 0, n);
+	system("pause");
 }
 
 /*BagLoad为背包总承重，BagCarryWeight为当前背包重量，BagCarrySum为背包内的物体数*/
