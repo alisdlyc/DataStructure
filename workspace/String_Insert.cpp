@@ -149,12 +149,12 @@ void SearchAndInsert(OutList* S,OutList* T,char t)
 int main() {
 	printf("ÇëÊäÈë´®s:\n");
 	char string_s[100];
-	gets_s(string_s);
+	gets_s(string_s,0);
 	OutList* ListS = InitString(string_s);
 
 	printf("ÇëÊäÈë´®t\n");
 	char string_t[100];
-	gets_s(string_t);
+	gets_s(string_t,0);
 	OutList* ListT = InitString(string_t);
 	
 	printf("ÇëÊäÈëÄ¿±ê×Ö·ût\n");

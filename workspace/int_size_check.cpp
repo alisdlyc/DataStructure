@@ -21,7 +21,7 @@ int main() {
 }
 
 int bad_int_size_is_32() {
-	unsigned int x = (unsigned(-1)) << 31;/*若至少为32位，则左移之后不为0*/
+	unsigned int x = unsigned(-1) << 31;/*若至少为32位，则左移之后不为0*/
 	return (x);
 }
 

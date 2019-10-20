@@ -1,6 +1,13 @@
+/*
+ * @Description: In User Settings Edit
+ * @Author: your name
+ * @Date: 2019-10-17 16:43:37
+ * @LastEditTime: 2019-10-17 16:43:37
+ * @LastEditors: your name
+ */
 #include <stdio.h>
 #include <malloc.h>
-
+#include<stdbool.h>
 #define MAXSIZE 40 /* 存储空间初始分配量 */
 
 /* 顺序栈结构 */

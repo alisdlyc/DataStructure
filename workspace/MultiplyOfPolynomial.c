@@ -1,3 +1,10 @@
+/*
+ * @Description: In User Settings Edit
+ * @Author: your name
+ * @Date: 2019-10-17 16:43:37
+ * @LastEditTime: 2019-10-17 16:43:37
+ * @LastEditors: your name
+ */
 //Data Structure Debug
 //1.Multiply返回值错误疑似空指针
 //2.判断语句'!='漏了一个'!'
@@ -5,6 +12,7 @@
 
 #include <stdio.h>
 #include <malloc.h>
+#include<stdbool.h>
 
 typedef struct Node
 {

@@ -1,13 +1,20 @@
+/*
+ * @Description: In User Settings Edit
+ * @Author: your name
+ * @Date: 2019-10-17 16:58:21
+ * @LastEditTime: 2019-10-17 16:58:21
+ * @LastEditors: your name
+ */
 #include <stdio.h>
 #include <malloc.h>
-#include <string>
+#include <string.h>
+#include <stdbool.h>
 /*∆•≈‰ ‰»Îµƒ¿®∫≈ «∑Ò’˝»∑∆•≈‰*/
-constexpr auto MAXSIZE = 40;;
 
 /* À≥–Ú’ªΩ·ππ */
 typedef struct
 {
-	char Sign[MAXSIZE];
+	char Sign[40];
 	int top; /* ”√”⁄’ª∂•÷∏’Î */
 }SignStack;
 
@@ -20,7 +27,7 @@ bool BracketPop(SignStack* S, bool* s, bool* m, bool* l);	   /*≈–∂œ¿®∫≈ «∑Ò’˝»∑≈
 int main() {
 	char IN[100];
 	char* mIn = IN;
-	gets_s(IN);
+	gets_s(IN,0);
 	SignStack mSign;
 	mSign.top = -1;
 

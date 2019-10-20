@@ -1,6 +1,14 @@
+/*
+ * @Description: In User Settings Edit
+ * @Author: your name
+ * @Date: 2019-10-17 16:43:37
+ * @LastEditTime: 2019-10-17 16:43:37
+ * @LastEditors: your name
+ */
 #include<stdio.h>
 #include<string.h>
 #include <malloc.h>
+#include<stdbool.h>
 #define MAXSIZE 40 /* 存储空间初始分配量 */
 
 typedef char String[MAXSIZE + 1]; /*  0号单元存放串的长度 */
@@ -66,11 +74,11 @@ int main() {
 
 	char input_s[40], input_t[40];
 	printf("请输入串s\n");
-	gets_s(input_s);	
+	gets_s(input_s,0);	
 	StrAssign(s, input_s);
 
 	printf("请输入串t\n");
-	gets_s(input_t);
+	gets_s(input_t,0);
 	StrAssign(t, input_t);
 
 	OutList* HeadPtr=(OutList*)malloc(sizeof(OutList));

@@ -7,7 +7,6 @@ int main() {
 	return 0;
 }
 int lower_one_mask(int n) {
-	/*输出为n个位长的1*/
 	unsigned int x=- 1;
 	return x >> (32-n);
 }
