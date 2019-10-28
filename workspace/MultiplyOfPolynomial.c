@@ -1,4 +1,12 @@
 /*
+ * @Author: your name
+ * @Date: 2019-10-17 16:43:37
+ * @LastEditTime: 2019-10-28 19:30:45
+ * @LastEditors: Please set LastEditors
+ * @Description: In User Settings Edit
+ * @FilePath: \DataStructure\workspace\MultiplyOfPolynomial.c
+ */
+// /*
  * @Description: In User Settings Edit
  * @Author: your name
  * @Date: 2019-10-17 16:43:37
