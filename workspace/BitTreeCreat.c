@@ -1,7 +1,7 @@
 /*
  * @Author: your name
  * @Date: 2019-11-01 21:32:37
- * @LastEditTime: 2019-11-02 14:01:12
+ * @LastEditTime: 2019-11-02 14:45:42
  * @LastEditors: Please set LastEditors
  * @Description: In User Settings Edit
  * @FilePath: \DataStructure\workspace\BitTreeCreat.c
@@ -10,6 +10,7 @@
 #include<malloc.h>
 #include<windows.h>
 #include<string.h>
+int r=0;
 typedef  struct BiTNode
 {
     char data;
@@ -54,16 +55,18 @@ char* PrimIn(char* In){
     return Out;
 }
 
-void CreatTree(BiTree *T,char* In,int t){
-    char ch=In[t++];
+void CreatTree(BiTree *T,char* In){
+    char ch=*(In+r);
+    r++;
+    printf("%c %d \n",ch,r);
     if(ch=='*'){
         *T=NULL;
     }
     else{
         *T =(BiTree)malloc(sizeof(BiTree));
         (*T)->data=ch;
-        CreatTree(&(*T)->lchild,In,t);
-        CreatTree(&(*T)->rchild,In,t);
+        CreatTree(&(*T)->lchild,In);
+        CreatTree(&(*T)->rchild,In);
     }
 }
 
@@ -84,8 +87,8 @@ int main(){
     char* Out=(char*)malloc(sizeof(char)*30);
     Out=PrimIn(In);
     puts(Out);
-    CreatTree(tree,Out,0);
-    InOrderTraverse(*tree);
+    CreatTree(tree,Out);
+    PreOrderTraverse(*tree);
     printf("\n");
     system("pause");
     return 0;
