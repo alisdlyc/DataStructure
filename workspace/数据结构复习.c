@@ -1,3 +1,11 @@
+/*
+ * @Author: your name
+ * @Date: 2019-11-07 17:20:14
+ * @LastEditTime: 2019-11-07 18:54:56
+ * @LastEditors: Please set LastEditors
+ * @Description: In User Settings Edit
+ * @FilePath: \DataStructure\workspace\数据结构复习.c
+ */
 typedef struct LNode {
     int data;
     struct LNode *next;
