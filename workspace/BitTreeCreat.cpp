@@ -1,5 +1,6 @@
 #include<stdio.h>
 #include<stdlib.h>
+#include<windows.h>
 #define max 10000
 
 typedef struct Tree{
@@ -7,6 +8,14 @@ typedef struct Tree{
 	struct Tree *lc,*rc;
 }tree;
 char pre[max],in[max];
+typedef struct QNode{
+    tree *bitree;//节点元素
+    struct QNode *next;//节点指向下一个节点的指针域
+} QNode;
+
+typedef struct {
+    QNode *front, *rear;
+} LinkQueue;
 
 int measure_pre();//求前序遍历序列的长度 
 int find_num(char Node);//找到in[]中对应的pre[n]的位置 
@@ -16,6 +25,11 @@ tree *creat_ltree(tree *t,char c);//创建左子树
 tree *creat_rtree(tree *t,char c);//创建右子树
 void post_print_tree(tree *root);//输出后序遍历序列 
 bool findancestor(char p,tree *root,int k,char a[max]);//查找p的祖先 
+void initQueue(LinkQueue *q); 
+void enQueue(LinkQueue *q, tree *root);
+tree* deQueue(LinkQueue *q);
+void levelOrder(tree *root, LinkQueue queue);
+
 
 int main()
 {
@@ -30,6 +44,7 @@ int main()
 	char a[max]={0};//用来存储找到的祖先 
 	char ch;//查找该结点的祖先 
 	int t=0;//是否存在该结点的判断标志 
+	LinkQueue queue;//队列，用在按层次遍历二叉树 
 	root=(tree *)malloc(sizeof(tree));
 	root->lc=NULL;
 	root->rc=NULL;
@@ -63,6 +78,8 @@ int main()
 	
 	printf("二叉树创建完成\n该二叉树的后序遍历序列为："); 
 	post_print_tree(root);
+	printf("\n该二叉树的层次遍历序列为: "); 
+	levelOrder(root->lc,queue) ;
 	printf("\n请输入要查找的结点值: ");
 	getchar();
 	scanf("%c",&ch);
@@ -71,18 +88,19 @@ int main()
 		if(ch==pre[i])
 		t=1;
 	}
-	if(t=0)
+	if(t==0)
 	{
-		printf("该结点不存在\n");
+		printf("\n该结点不存在\n");
 		getchar();
 	}
 	else 
 	{
-		findancestor(ch,root,0,a);
+		findancestor(ch,root->lc,0,a);
 		for(i=0;i<max,a[i]!=0;i++)//是i=0的时候第一个是乱码 
 		printf("%c",a[i]);
 	}
-	getchar(); 
+	printf("\n");
+	system("pause");
 	return 0;
 }
 
@@ -116,7 +134,6 @@ int find_rtree(int flag[],int n)
 	if(flag[n]==1) return(n);
 	else return(-1);
 }
-
 tree *creat_ltree(tree *t,char c)
 {
 	tree *temp;
@@ -156,12 +173,56 @@ bool findancestor(char p,tree *root,int k,char a[max])//第一个找到的祖先就是结点
 	return false;
 	if(root->data==p)
 	{
-		return true;
-	} 
-	if(findancestor(p,root->lc,k+1,a)||findancestor(p,root->rc,k+1,a))
-	{
 		a[k]=root->data;
 		return true;
+	} 
+	 if(findancestor(p,root->lc,k+1,a)||findancestor(p,root->rc,k+1,a))
+	 {
+	 	a[k]=root->data;
+	 	return true;
+	 }
+	 return false;
+}
+void initQueue(LinkQueue *q) 
+{
+    q->front = q->rear = (QNode *) malloc(sizeof(QNode));
+    q->front->next = NULL;
+}
+void enQueue(LinkQueue *q, tree *root) 
+{    
+	 QNode *s = (QNode *) malloc(sizeof(QNode));
+     s->bitree = root; 
+	 q->rear->next = s;
+	 q->rear = s;
+}
+tree* deQueue(LinkQueue *q)
+{  
+	QNode *s = q->front->next; 
+    tree *Bitree = s->bitree;    
+    q->front->next = s->next;  
+    if (s == q->rear) 
+	{        
+	    q->rear = q->front;   
+	}   
+	free(s);  
+	return Bitree;
+}
+void levelOrder(tree *root, LinkQueue queue) 
+{    
+	initQueue(&queue);   
+    tree *p;    
+    enQueue(&queue, root);   
+    while (queue.front != queue.rear) 
+    {        
+        p = deQueue(&queue);      
+        printf("%c",p->data);     
+	    if (p->lc != NULL) 
+	    {           
+	        enQueue(&queue, p->lc); 
+	    }       
+		if (p->rc != NULL)
+		{           
+			enQueue(&queue, p->rc);  
+		}    
 	}
-	return false;
 }
