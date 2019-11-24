@@ -25,7 +25,7 @@ void CreateMGraph(MGraph *G);
 boolean visited[10]; /* 访问标志的数组 */
 int PathOut[10]; 	 /* 输出简单回路*/
 /* 邻接矩阵的深度优先递归算法 */
-void DFS(MGraph G, int i, int len);
+void DFS(MGraph G, int i, int len,int str);
 /* 邻接矩阵的深度遍历操作 */
 void DFSTraverse(MGraph G);
 
