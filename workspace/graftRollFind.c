@@ -1,7 +1,7 @@
 /*
  * @Author: your name
  * @Date: 2019-11-22 21:07:52
- * @LastEditTime: 2019-11-23 20:29:05
+ * @LastEditTime: 2019-11-24 20:39:25
  * @LastEditors: Please set LastEditors
  * @Description: In User Settings Edit
  * @FilePath: \DataStructure\workspace\graftRollFind.c
@@ -73,6 +73,7 @@ void DFS(MGraph G, int i, int len, int str)
 					for(int t=0; t<=len+1; t++)
 						printf("%d",PathOut[t]);
 					printf("\n");
+					break;
 			}
 		}
 	}

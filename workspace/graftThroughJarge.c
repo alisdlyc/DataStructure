@@ -1,7 +1,7 @@
 /*
  * @Author: your name
  * @Date: 2019-11-22 20:14:39
- * @LastEditTime: 2019-11-23 20:50:01
+ * @LastEditTime: 2019-11-24 20:48:29
  * @LastEditors: Please set LastEditors
  * @Description: In User Settings Edit
  * @FilePath: \DataStructure\workspace\graftThroughJarge.c
@@ -35,12 +35,13 @@ int main(void)
 {    
 	MGraph G;    
 	CreateMGraph(&G);
-	printf("请输入要查询的两个结点与路径长度k:\n");
+	sd:printf("请输入要查询的两个结点与路径长度k:\n");
     scanf("%d%d%d",&v1,&v2,&k);
     if(HavePathk(G))
         printf("存在一条长为k的路径\n");
     else
         printf("不存在这样的路径\n");
+	goto sd;
 	system("pause");
 	return 0;
 }
@@ -53,7 +54,6 @@ void CreateMGraph(MGraph *G)
 	for(int i = 0;i <G->numNodes;i++)
 		for(int j = 0;j <G->numNodes;j++)
 			G->arc[i][j]=0;	/* 邻接矩阵初始化 */
-
 
 	for(int t = 0;t <G->numEdges;t++) /* 读入numEdges条边，建立邻接矩阵 */
 	{
@@ -93,9 +93,13 @@ void DFS(MGraph G, int i, int len)
 void DFSTraverse(MGraph G)
 {
 	int i;
+
 	for(i = 0; i < G.numNodes; i++)
- 		visited[i] = FALSE; /* 初始所有顶点状态都是未访问过状态 */
-	for(i = 0; i < G.numNodes; i++)
+	{		
+		for(int j = 0; j < G.numNodes; j++)
+ 			visited[j] = FALSE; /* 初始所有顶点状态都是未访问过状态 */
  		if(!visited[i]) /* 对未访问过的顶点调用DFS，若是连通图，只会执行一次 */ 
 			DFS(G, i, 0);
+	}
+
 }
