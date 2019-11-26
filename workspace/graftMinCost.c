@@ -1,7 +1,7 @@
 /*
  * @Author: your name
  * @Date: 2019-11-23 20:48:42
- * @LastEditTime: 2019-11-24 21:36:49
+ * @LastEditTime: 2019-11-25 19:37:32
  * @LastEditors: Please set LastEditors
  * @Description: In User Settings Edit
  * @FilePath: \DataStructure\workspace\PrimAlToMinGraft.c
@@ -119,25 +119,44 @@ void CreatMGraph_Prim(MGraph *G)
 	printf("\n");
 }
 
+
+
+/* 查找连线顶点的尾部下标 */
+int Find(int *parent, int f)
+{
+	while ( parent[f] > 0)
+	{
+		f = parent[f];
+	}
+	return f;
+}
+
 /* 生成最小生成树 */
 /* 第一步，定义parent数组，用于是否成环的判断*/
 /* 第二步，在邻接表中选取不构成环的权值最小结点*/
 /* 将该节点置0，重复第二步直到生成最小生成树*/
 void MiniSpanTree_Kruskal(GraphAdjList G)
 {
-	int i, j;
+	printf("最小生成树为：\n");
+	int i, j, n, m;
 	int k = 0;
 	int parent[10];/* 定义一数组用来判断边与边是否形成环路 */
 
 	//TODO:每次寻找除了未放置路径之外的最小权值路径，若不构成环，则继续
 	//TODO:BUG：使用Parent数组寻找祖先时错误
 	for (i = 0; i < G.numNodes; i++)
-		parent[i] = 0;	/* 初始化数组值为0 */
-	for(int i=0;i<G.numNodes;){
+		parent[i] =-1;	/* 初始化数组值为0 */
+
+	for(int i=1;i<G.numNodes;){	//每次寻找最小权值结点，共执行n-1次，找到n-1条边时结束
 		int* re=MinWFind(&G);
-		if(!parent[*(re+2)]){
-			parent[*(re+1)]=1;
-			printf("(%d,%d) ",*(re+1),*(re+2));
+
+		n = Find(parent,*(re+1));
+		m = Find(parent,*(re+2));
+		if (n != m) /* 假如n与m不等，说明此边没有与现有的生成树形成环路 */
+		{
+			parent[n] = m;	/* 将此边的结尾顶点放入下标为起点的parent中。 */
+							/* 表示此顶点已经在生成树集合中 */
+			printf("(%d, %d) %d\n", *(re+1), *(re+2), *re);
 			i++;
 		}
 	}
@@ -149,23 +168,26 @@ int* MinWFind(GraphAdjList *G){
 	int MinW=65535;
 	int Mini;
 	int Minj;
-	for(int i=0;i<G->numNodes;i++){
-		if(G->adjList[i].data>-1){
-			EdgeNode* HeadPtr=G->adjList[i].firstedge;
+	EdgeNode* MinWNode;
 
-			while (HeadPtr->next)
+	for(int i=0;i<G->numNodes;i++){
+		if(G->adjList[i].firstedge){
+			EdgeNode* Ptr=G->adjList[i].firstedge;
+
+			while (Ptr->next)
 			{
-				if(HeadPtr->info<MinW){
+				if(Ptr->info<MinW){
 					Mini=i;
-					Minj=HeadPtr->adjvex;
-					MinW=HeadPtr->info;
+					Minj=Ptr->adjvex;
+					MinW=Ptr->info;
+					MinWNode=Ptr;
 				}
-				HeadPtr=HeadPtr->next;
+				Ptr=Ptr->next;
 			}
 		}
 	}
 	// 找到最小结点之后将最小结点所在的adjList的data置为-1，表示该节点已经存在于最小生成树里
-	G->adjList[Mini].data=-1;
+	MinWNode->info=65535;// 找到该结点后将权值设置为Max
 	int* re=(int *)malloc(sizeof(int)*3);
 	*re=MinW;
 	*(re+1)=Mini;
