@@ -1,7 +1,7 @@
 /*
  * @Author: your name
  * @Date: 2019-11-23 20:48:42
- * @LastEditTime: 2019-11-25 19:37:32
+ * @LastEditTime: 2019-11-30 20:16:21
  * @LastEditors: Please set LastEditors
  * @Description: In User Settings Edit
  * @FilePath: \DataStructure\workspace\PrimAlToMinGraft.c
@@ -42,25 +42,35 @@ typedef struct
 	int weight;
 }Edge;   /* 对边集数组Edge结构的定义 */
 
-void  CreateALGraph(GraphAdjList *G);
+void CreateALGraph(GraphAdjList *G);
 void CreatMGraph_Prim(MGraph *G);
 void MiniSpanTree_Prim(MGraph G);	
 void MiniSpanTree_Kruskal(GraphAdjList G);
 int* MinWFind(GraphAdjList *G);
+void MiniSpanTree_brokedge(MGraph *G);
+void DFS(MGraph G, int i);
+int* MaxEdgeWFind(MGraph *G);
+void CreatMGraph_brokedge(MGraph *G);
+void DFSTraverse(MGraph G, int* numNode);
+int counts;
 
 int main(void)
 {    
 	int start;
-	printf("由邻接矩阵创建输入1，使用邻接表创建最小生成树输入2\n");
+	printf("由邻接矩阵创建输入1，使用邻接表创建最小生成树输入2，使用去边法创建输入3\n");
 	scanf("%d",&start);
 	if(start==1){
 		MGraph G;
 		CreatMGraph_Prim(&G);
 		MiniSpanTree_Prim(G);
-	}else{
+	}else if(start==2){
 		GraphAdjList G;    
 		CreateALGraph(&G);
 		MiniSpanTree_Kruskal(G);
+	}else if(start==3){
+		MGraph G;
+		CreatMGraph_brokedge(&G);
+		MiniSpanTree_brokedge(&G);
 	}
 	system("pause");
 	return 0;
@@ -119,7 +129,28 @@ void CreatMGraph_Prim(MGraph *G)
 	printf("\n");
 }
 
+/* 建立无向网图的邻接矩阵表示 */
+void CreatMGraph_brokedge(MGraph *G)
+{
+	printf("输入顶点数和边数:\n");
+	scanf("%d%d",&G->numNodes,&G->numEdges); /* 输入顶点数和边数 */
+	
+	for(int i = 0;i <G->numNodes;i++)
+		for(int j = 0;j <G->numNodes;j++)
+			G->arc[i][j]=-1;	/* 邻接矩阵初始化 */
 
+	for(int t = 0;t <G->numEdges;t++) /* 读入numEdges条边，建立邻接矩阵 */
+	{
+		int i,j,w;
+		printf("输入边(vi,vj)上的下标i，下标j,权值w:\n");
+		scanf("%d%d%d",&i,&j,&w); /* 输入边(vi,vj)上的权w */
+		G->arc[i][j]=w;        /* 图中有边标记为1，无边标记为0*/
+		G->arc[j][i]= G->arc[i][j]; /* 因为是无向图，矩阵对称 */
+	}
+	printf("\n");
+
+
+}
 
 /* 查找连线顶点的尾部下标 */
 int Find(int *parent, int f)
@@ -199,8 +230,8 @@ int* MinWFind(GraphAdjList *G){
 void MiniSpanTree_Prim(MGraph G)
 {
 	int min, i, j, k;
-	int adjvex[10];		/* 保存相关顶点下标 */
-	int lowcost[10];	/* 保存相关顶点间边的权值 */
+	int adjvex[6];		/* 保存相关顶点下标 */
+	int lowcost[6];	/* 保存相关顶点间边的权值 */
 	lowcost[0] = 0;/* 初始化第一个权值为0，即v0加入生成树 */
 			/* lowcost的值为0，在这里就是此下标的顶点已经加入生成树 */
 	adjvex[0] = 0;			/* 初始化第一个顶点下标为0 ,且代表第一个顶点已经存入最小代价生成树中*/
@@ -216,7 +247,8 @@ void MiniSpanTree_Prim(MGraph G)
 		min = 65535;	/* 初始化最小权值为∞， */
 
         /* 每次都循环所有顶点，找到在当前结点中，连接新顶点的最小权值的边*/
-		j = 1;k = 0;
+		j = 1; 
+		k = 0;
 		while(j < G.numNodes)	/* 循环全部顶点 */
 		{
 			if(lowcost[j]!=0 && lowcost[j] < min)/* 如果权值不为0且权值小于min */
@@ -239,3 +271,70 @@ void MiniSpanTree_Prim(MGraph G)
 		}
 	}
 }
+
+
+bool visited[6]; /* 访问标志的数组 */
+
+/* 邻接矩阵的深度优先递归算法 */
+void DFS(MGraph G, int i)
+{
+	int j;
+	counts++;
+	visited[i] = TRUE;
+
+	for(j = 0; j < G.numNodes; j++)
+		if(G.arc[i][j] >= 0 && !visited[j]){
+			DFS(G, j);/* 对为访问的邻接顶点递归调用 */
+		}
+}
+
+/* 邻接矩阵的深度遍历操作 */
+void DFSTraverse(MGraph G, int* numNode)
+{
+	int i;
+	for(i = 0; i < G.numNodes; i++)
+ 		visited[i] = FALSE; /* 初始所有顶点状态都是未访问过状态 */
+	DFS(G,1);
+}
+
+/* 寻找当前最大节点所在的下标 */
+int* MaxEdgeWFind(MGraph* G){
+	int max=0;
+	int re[2];
+	for(int t=0;t<G->numEdges;t++){
+		for(int i=0;i<G->numNodes;i++){
+			for(int j=0;j<G->numNodes;j++){
+				if(G->arc[i][j]>max){
+					// 若存在更大权值的边
+					max=G->arc[i][j];
+					re[0]=i;
+					re[1]=j;
+				}
+			}
+		}
+
+		G->arc[re[0]][re[1]]=-1;
+		G->arc[re[1]][re[0]]=-1;
+		max=0;
+		int num;
+
+		counts=0;
+		DFSTraverse(*G,&num);
+
+		if(!(counts==G->numNodes)){
+			printf("(%d,%d)\n",re[0],re[1]);
+			G->arc[re[0]][re[1]]=0;
+			G->arc[re[1]][re[0]]=0;
+		}
+	}
+}
+
+void MiniSpanTree_brokedge(MGraph* G){
+	// 1.找到该无向图中权值最大的边
+	// 2.去除边，判断图是否连通
+	// 		a.若连通，则去除
+	// 		b.不连通，保留此边
+	// 3.重复直到剩余n-1条边
+	MaxEdgeWFind(G);
+}
+
