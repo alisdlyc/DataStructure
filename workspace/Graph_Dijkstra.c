@@ -54,7 +54,7 @@ void CreateMGraph(MGraph *G)
 
 	G->arc[7][8]=2; 
 
-	for(i = 0; i < G->numVertexes; i++)
+	// for(i = 0; i < G->numVertexes; i++)
 	{
 		for(j = i; j < G->numVertexes; j++)
 		{
