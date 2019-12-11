@@ -1,7 +1,7 @@
 /*
  * @Author: your name
  * @Date: 2019-11-23 20:48:42
- * @LastEditTime: 2019-11-30 20:16:21
+ * @LastEditTime: 2019-12-09 18:27:03
  * @LastEditors: Please set LastEditors
  * @Description: In User Settings Edit
  * @FilePath: \DataStructure\workspace\PrimAlToMinGraft.c
@@ -315,7 +315,7 @@ int* MaxEdgeWFind(MGraph* G){
 
 		G->arc[re[0]][re[1]]=-1;
 		G->arc[re[1]][re[0]]=-1;
-		max=0;
+		max=-1;
 		int num;
 
 		counts=0;
