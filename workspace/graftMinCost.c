@@ -1,7 +1,7 @@
 /*
  * @Author: your name
  * @Date: 2019-11-23 20:48:42
- * @LastEditTime: 2019-12-09 18:27:03
+ * @LastEditTime: 2019-12-11 20:07:46
  * @LastEditors: Please set LastEditors
  * @Description: In User Settings Edit
  * @FilePath: \DataStructure\workspace\PrimAlToMinGraft.c
@@ -49,7 +49,7 @@ void MiniSpanTree_Kruskal(GraphAdjList G);
 int* MinWFind(GraphAdjList *G);
 void MiniSpanTree_brokedge(MGraph *G);
 void DFS(MGraph G, int i);
-int* MaxEdgeWFind(MGraph *G);
+void MaxEdgeWFind(MGraph *G);
 void CreatMGraph_brokedge(MGraph *G);
 void DFSTraverse(MGraph G, int* numNode);
 int counts;
@@ -298,11 +298,11 @@ void DFSTraverse(MGraph G, int* numNode)
 }
 
 /* 寻找当前最大节点所在的下标 */
-int* MaxEdgeWFind(MGraph* G){
+void MaxEdgeWFind(MGraph* G){
 	int max=0;
 	int re[2];
-	for(int t=0;t<G->numEdges;t++){
-		for(int i=0;i<G->numNodes;i++){
+	for(int t=0;t<G->numEdges;t++){/*对图中所有的边进行遍历*/
+		for(int i=0;i<G->numNodes;i++){/*遍历所有顶点，寻找最大权值的边*/
 			for(int j=0;j<G->numNodes;j++){
 				if(G->arc[i][j]>max){
 					// 若存在更大权值的边
@@ -318,9 +318,10 @@ int* MaxEdgeWFind(MGraph* G){
 		max=-1;
 		int num;
 
+		/*用一次DFS判断当前图是否连通*/
 		counts=0;
 		DFSTraverse(*G,&num);
-
+		/*若去除当前边，图不再连通则保留此边，并且输出这条边，将其权值修改为-1*/
 		if(!(counts==G->numNodes)){
 			printf("(%d,%d)\n",re[0],re[1]);
 			G->arc[re[0]][re[1]]=0;
