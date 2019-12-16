@@ -7,6 +7,7 @@
  * @FilePath: \DataStructure\workspace\sort_linklist_insert.c
  */
 
+/* 试以单链表为存储结构实现简单插入排序*/
 /* 对顺序表L作直接插入排序 */
 void InsertSort(SqList *L)
 { 
