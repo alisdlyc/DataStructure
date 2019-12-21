@@ -1,7 +1,7 @@
 /*
  * @Author: your name
  * @Date: 2019-12-21 19:05:17
- * @LastEditTime : 2019-12-21 19:22:25
+ * @LastEditTime : 2019-12-21 19:53:16
  * @LastEditors  : Please set LastEditors
  * @Description: In User Settings Edit
  * @FilePath: \DataStructure\workspace\sort_use_DataGroup.c
@@ -15,6 +15,7 @@
 // 定义子函数对数组C[i]进行排序，且对C[i]执行排序操作的同时，将A[i]执行同样的交换操作
 
 #include <stdio.h>
+#include <windows.h>
 int NumBelowX(int x,int* A){    // Used for find the num of C[i]
     int temp;
     for(int i=0;i<10;i++){
@@ -44,9 +45,23 @@ void SortC(int* A,int *C){   // Used for sort C[i] and sort A[i] as the same law
 
 int main(){
     int A[10];
+    printf("in: ");
+    for(int t=9;t>=0;t--){
+        A[t]=t;
+        printf("%d ",A[t]);
+    }
+    printf("\n");
+    
     int C[10];
     for(int i=0;i<10;i++){
         C[i]=NumBelowX(A[i],A);
     }
+    SortC(A,C);
+    printf("out: ");
+    for(int i=0;i<10;i++){
+        printf("%d ",A[i]);
+    }
+    printf("\n");
+    system("pause");
     return 0;
 }
