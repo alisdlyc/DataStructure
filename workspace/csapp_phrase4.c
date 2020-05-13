@@ -6,7 +6,7 @@
  * @Description: In User Settings Edit
  * @FilePath: \DataStructure\workspace\csapp_phrase4.c
  */
-#include <stdio.h>
+#include<stdio.h>
 int f(int x,int  y){
     if (x == 0) return 0;
     if (x == 1) return y;

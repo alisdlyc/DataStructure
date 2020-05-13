@@ -6,9 +6,32 @@
  * @Description: In User Settings Edit
  * @FilePath: \DataStructure\workspace\search_major.c
  */
-/* ╡ИурпРапрт╢Ьм╥╫А╣Ц╣д╣╔а╢╠М╠Мй╬ё╛╦В╫А╣ЦжпиХр╩╦Ж╥цнйф╣╤хё╛
- *      ЁУй╪ж╣н╙ 0ё╛ц©╢н╡ИурЁи╧╕╨С╦ц╫А╣Цф╣╤хж╣тЖ╪с 1║ёйт╦ЬЁЖкЦ╥╗ё╛тзц©╢н╡Иур╨С╡ИурпРап╬Ы╟╢╥цнйф╣╤х╢с╢С╣╫п║ееап║ё
+/* О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫т╢О©╫м╥О©╫О©╫О©╫д╣О©╫О©╫О©╫О©╫О©╫О©╫О©╫й╬О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫р╩О©╫О©╫О©╫О©╫О©╫О©╫ф╣О©╫хёО©╫
+ *      О©╫О©╫й╪ж╣н╙ 0О©╫О©╫ц©О©╫н╡О©╫О©╫рЁи╧О©╫О©╫О©╫ц╫О©╫О©╫ф╣О©╫О©╫ж╣О©╫О©╫О©╫О©╫ 1О©╫О©╫О©╫т╦О©╫О©╫О©╫О©╫Ц╥╗О©╫О©╫О©╫О©╫ц©О©╫н╡О©╫О©╫р╨О©╫О©╫О©╫О©╫О©╫О©╫О©╫п╬О©╫О©╫О©╫О©╫О©╫О©╫О©╫ф╣О©╫х╢с╢О©╫п║О©╫О©╫О©╫п║О©╫
  */
+
+// О©╫О©╫О©╫О©╫О©╫О©╫о╨О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫ф╣О©╫О©╫
+void ListSort(Node *HeadReList) {
+	int n, m;
+	Node* Ptr;
+    int len=9;
+
+	for (int i = 0; i < len; i++) {
+		Ptr = HeadReList;
+		for (int j = i; j < len - 1; j++) {
+			if (Ptr->freq < Ptr->next->freq) {
+				int data_m = Ptr->data;
+                int data_freq=Ptr->freq;
+                Ptr->data = Ptr->next->data;
+                Ptr->freq=Ptr->next->freq;
+				Ptr->next->data = data_m;
+                Ptr->next->freq=data_freq;
+			}
+			Ptr = Ptr->next;
+		}
+	}
+}
+
 
 typedef struct Node
 {
@@ -31,24 +54,3 @@ int ListSearch(Node* HeadPtr,int key){
     return re;
 }
 
-// кякВмЙ╠о╨Сё╛жьпбееапкякВф╣╤х
-void ListSort(Node *HeadReList) {
-	int n, m;
-	Node* Ptr;
-    int len=9;
-
-	for (int i = 0; i < len; i++) {
-		Ptr = HeadReList;
-		for (int j = i; j < len - 1; j++) {
-			if (Ptr->freq < Ptr->next->freq) {
-				int data_m = Ptr->data;
-                int data_freq=Ptr->freq;
-                Ptr->data = Ptr->next->data;
-                Ptr->freq=Ptr->next->freq;
-				Ptr->next->data = data_m;
-                Ptr->next->freq=data_freq;
-			}
-			Ptr = Ptr->next;
-		}
-	}
-}

@@ -3,7 +3,7 @@
     "configurations": [
       
         {
-            "name": "C++ Launch",
+            "name": "C++ 冲冲冲",
             "type": "cppdbg", 
             "request": "launch",
             "program":"${fileDirname}/${fileBasenameNoExtension}",
